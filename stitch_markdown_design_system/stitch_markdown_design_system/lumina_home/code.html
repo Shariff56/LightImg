@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Lumina - Premium Utility</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=Inter:wght@400;500&family=JetBrains+Mono:wght@500&family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&family=JetBrains+Mono:wght@100..900&family=Sora:wght@100..900&display=swap" rel="stylesheet"/>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .glow-primary {
+            box-shadow: 0 0 25px -5px rgba(124, 58, 237, 0.15);
+        }
+        .glass-card {
+            background: #1A1A22;
+            box-shadow: inset 0 1px 1px 0 rgba(255, 255, 255, 0.05);
+        }
+        .active-glow {
+            filter: drop-shadow(0 0 8px rgba(210, 187, 255, 0.4));
+        }
+        body {
+            background-color: #0E0E12;
+            -webkit-tap-highlight-color: transparent;
+        }
+        @keyframes subtle-pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.8; }
+        }
+        .pulse-ad {
+            animation: subtle-pulse 3s infinite ease-in-out;
+        }
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "tertiary-fixed-dim": "#ffb784",
+                      "tertiary": "#ffb784",
+                      "on-primary-container": "#ede0ff",
+                      "tertiary-fixed": "#ffdcc6",
+                      "outline": "#958da1",
+                      "on-surface": "#e4e1e7",
+                      "on-primary-fixed": "#25005a",
+                      "error-container": "#93000a",
+                      "on-background": "#e4e1e7",
+                      "on-error-container": "#ffdad6",
+                      "surface": "#1A1A22",
+                      "primary-container": "#7c3aed",
+                      "primary-fixed-dim": "#d2bbff",
+                      "on-error": "#690005",
+                      "on-tertiary-container": "#ffe0cd",
+                      "surface-variant": "#353439",
+                      "surface-container": "#1f1f23",
+                      "tertiary-container": "#a15100",
+                      "background": "#131317",
+                      "primary": "#d2bbff",
+                      "accent-pink": "#EC4899",
+                      "text-secondary": "#A0A0AC",
+                      "surface-container-low": "#1b1b1f",
+                      "outline-variant": "#4a4455",
+                      "surface-dim": "#131317",
+                      "secondary-fixed-dim": "#adc6ff",
+                      "inverse-on-surface": "#303034",
+                      "surface-container-lowest": "#0e0e12",
+                      "on-tertiary-fixed-variant": "#713700",
+                      "on-primary-fixed-variant": "#5a00c6",
+                      "on-secondary": "#002e6a",
+                      "error": "#F87171",
+                      "surface-tint": "#d2bbff",
+                      "on-secondary-fixed-variant": "#004395",
+                      "on-tertiary": "#4f2500",
+                      "secondary": "#adc6ff",
+                      "success": "#34D399",
+                      "secondary-container": "#0566d9",
+                      "secondary-fixed": "#d8e2ff",
+                      "on-primary": "#3f008e",
+                      "inverse-primary": "#732ee4",
+                      "on-secondary-container": "#e6ecff",
+                      "surface-bright": "#39393d",
+                      "surface-container-highest": "#353439",
+                      "on-secondary-fixed": "#001a42",
+                      "text-primary": "#F5F5F7",
+                      "primary-fixed": "#eaddff",
+                      "on-tertiary-fixed": "#301400",
+                      "surface-container-high": "#2a292e",
+                      "on-surface-variant": "#ccc3d8",
+                      "inverse-surface": "#e4e1e7"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.25rem",
+                      "lg": "0.5rem",
+                      "xl": "0.75rem",
+                      "full": "9999px"
+              },
+              "spacing": {
+                      "md": "12px",
+                      "xxl": "32px",
+                      "sm": "8px",
+                      "xl": "24px",
+                      "gutter": "16px",
+                      "lg": "16px",
+                      "margin-mobile": "16px",
+                      "xs": "4px",
+                      "margin-tablet": "24px"
+              },
+              "fontFamily": {
+                      "caption": ["Inter"],
+                      "display-lg": ["Sora"],
+                      "body-md": ["Inter"],
+                      "body-sm": ["Inter"],
+                      "label-caps": ["JetBrains Mono"],
+                      "headline-sm": ["Sora"]
+              },
+              "fontSize": {
+                      "caption": ["13px", {"lineHeight": "18px", "fontWeight": "400"}],
+                      "display-lg": ["28px", {"lineHeight": "36px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                      "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                      "body-sm": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                      "label-caps": ["12px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "500"}],
+                      "headline-sm": ["20px", {"lineHeight": "28px", "fontWeight": "600"}]
+              }
+            },
+          },
+        }
+      </script>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-surface-container-lowest text-on-surface selection:bg-primary/30 min-h-screen flex flex-col">
+<!-- TopAppBar -->
+<header class="w-full top-0 sticky bg-surface/80 backdrop-blur-xl border-b border-white/5 z-50 flat no shadows flex items-center justify-between px-lg h-16 w-full">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-2xl" style="font-variation-settings: 'FILL' 1;">auto_awesome</span>
+<h1 class="font-display-lg text-display-lg bg-gradient-to-r from-primary to-accent-pink bg-clip-text text-transparent">Lumina</h1>
+</div>
+<button class="hover:bg-surface-variant/50 active:scale-95 transition-transform p-2 rounded-full">
+<span class="material-symbols-outlined text-primary">settings</span>
+</button>
+</header>
+<main class="flex-1 px-lg pt-xl pb-32">
+<!-- Hero Section / Greeting -->
+<div class="mb-xxl">
+<h2 class="font-headline-sm text-headline-sm text-on-surface mb-xs">Fast. Precise. Local.</h2>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Your premium toolbox for image perfection.</p>
+</div>
+<!-- 2x2 Bento Action Grid -->
+<div class="grid grid-cols-2 gap-gutter">
+<!-- Compress Card -->
+<button class="glass-card glow-primary p-lg rounded-xl flex flex-col items-start text-left transition-all duration-300 group hover:bg-surface-variant/30" onclick="this.classList.add('scale-95'); setTimeout(()=>this.classList.remove('scale-95'), 150)">
+<div class="bg-primary-container/20 p-md rounded-lg mb-md group-hover:scale-110 transition-transform duration-300">
+<span class="material-symbols-outlined text-primary text-3xl">photo_size_select_small</span>
+</div>
+<h3 class="font-headline-sm text-headline-sm text-on-surface leading-tight">Compress</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-xs">Reduce file size without losing quality.</p>
+</button>
+<!-- Resize Card -->
+<button class="glass-card glow-primary p-lg rounded-xl flex flex-col items-start text-left transition-all duration-300 group hover:bg-surface-variant/30" onclick="this.classList.add('scale-95'); setTimeout(()=>this.classList.remove('scale-95'), 150)">
+<div class="bg-primary-container/20 p-md rounded-lg mb-md group-hover:scale-110 transition-transform duration-300">
+<span class="material-symbols-outlined text-primary text-3xl">aspect_ratio</span>
+</div>
+<h3 class="font-headline-sm text-headline-sm text-on-surface leading-tight">Resize</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-xs">Adjust dimensions for any platform.</p>
+</button>
+<!-- Convert Card -->
+<button class="glass-card glow-primary p-lg rounded-xl flex flex-col items-start text-left transition-all duration-300 group hover:bg-surface-variant/30" onclick="this.classList.add('scale-95'); setTimeout(()=>this.classList.remove('scale-95'), 150)">
+<div class="bg-primary-container/20 p-md rounded-lg mb-md group-hover:scale-110 transition-transform duration-300">
+<span class="material-symbols-outlined text-primary text-3xl">transform</span>
+</div>
+<h3 class="font-headline-sm text-headline-sm text-on-surface leading-tight">Convert</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-xs">Swap between JPG, PNG, and HEIC.</p>
+</button>
+<!-- PDF Card -->
+<button class="glass-card glow-primary p-lg rounded-xl flex flex-col items-start text-left transition-all duration-300 group hover:bg-surface-variant/30" onclick="this.classList.add('scale-95'); setTimeout(()=>this.classList.remove('scale-95'), 150)">
+<div class="bg-primary-container/20 p-md rounded-lg mb-md group-hover:scale-110 transition-transform duration-300">
+<span class="material-symbols-outlined text-primary text-3xl">picture_as_pdf</span>
+</div>
+<h3 class="font-headline-sm text-headline-sm text-on-surface leading-tight">PDF</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-xs">Export multiple images to PDF.</p>
+</button>
+</div>
+<!-- Recent Activity Placeholder -->
+<div class="mt-xxl">
+<div class="flex justify-between items-center mb-md">
+<h3 class="font-label-caps text-label-caps text-on-surface-variant uppercase tracking-widest">Recent Activity</h3>
+<span class="font-body-sm text-body-sm text-primary">View All</span>
+</div>
+<div class="space-y-md">
+<div class="glass-card p-md rounded-lg flex items-center gap-md">
+<div class="w-12 h-12 rounded bg-surface-variant flex items-center justify-center overflow-hidden">
+<img class="w-full h-full object-cover opacity-60" data-alt="A moody, high-contrast black and white photograph of a sleek modern skyscraper reflected in a rain puddle. The lighting is dramatic with deep shadows and sharp highlights, echoing a premium utility app's dark aesthetic. The composition is professional and centered, suggesting precision and clarity in image processing." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDz6qUuNIht1a5EKW1X-qEhg3s4vwhva-NXHTUDB5F-N4rpSnlpjvndPlCBXi-jMGTvj4jd_ImLsGTXUVO3TyaICleOLDO3kvOfdpobkgldarBVtKEFqNaOzwQ8KX4z4wzlTfael7oZ4aZmehUxS45oUUfsa6bFKKPfXtNeOpBlNqD68q24dTtxMt9gUx9X5hgPPZRw_d7NwzZTIPnPRPlikLyMqXwZXiAVgMnNmLMBSg0oZPkDU5rrWsXgVMP5n4goXCtoFUIjc3k"/>
+</div>
+<div class="flex-1">
+<p class="font-body-md text-body-md text-on-surface leading-tight">IMG_2024_01.jpg</p>
+<p class="font-caption text-caption text-on-surface-variant">Compressed to 450KB</p>
+</div>
+<span class="material-symbols-outlined text-on-surface-variant">chevron_right</span>
+</div>
+<div class="glass-card p-md rounded-lg flex items-center gap-md">
+<div class="w-12 h-12 rounded bg-surface-variant flex items-center justify-center overflow-hidden">
+<img class="w-full h-full object-cover opacity-60" data-alt="A macro photograph of professional camera lens elements glowing with subtle purple and pink lens flares. The scene is set against a dark, minimalist background, emphasizing the premium quality and technological sophistication of the Lumina app. Soft lighting and deep blacks create a sense of professional-grade equipment." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBae0ECOwPJEv67IXx1VhNq8XmigHMbadjNJ5R0WiZmehup7u1vECCQHd1m-w-sha9wSuzhBXv0oF1A0GU-ivC8F3i9zc7LVorZTzrRQr9AdAsyJIniK2itGSDs9eNO83joJv_9A3-9hXMdtjXq4iSXOgVfiS-_6CCXOH-6oMHNiKzHh0fvIbzBnJbEk8JGwSy6JI8fXt4nU9rth21OTQeUeBstTl1MT3Y3EaYgsbfnr500VuyRC5rI3-qUVEh7MyD7MUPlfWuiL3w"/>
+</div>
+<div class="flex-1">
+<p class="font-body-md text-body-md text-on-surface leading-tight">vacation_hero.png</p>
+<p class="font-caption text-caption text-on-surface-variant">Resized to 1080x1920</p>
+</div>
+<span class="material-symbols-outlined text-on-surface-variant">chevron_right</span>
+</div>
+</div>
+</div>
+<!-- Ad Slot -->
+<div class="mt-xxl mb-xl">
+<div class="w-full border-t border-white/5 pt-md">
+<span class="font-label-caps text-[10px] text-on-surface-variant mb-xs block">Sponsored Content</span>
+<div class="w-full h-24 glass-card rounded-lg flex items-center justify-center border border-white/5 relative overflow-hidden group">
+<div class="absolute inset-0 bg-gradient-to-br from-primary/5 to-accent-pink/5 pulse-ad"></div>
+<div class="z-10 flex flex-col items-center">
+<span class="font-label-caps text-label-caps text-on-surface-variant tracking-[0.2em]">Ad</span>
+<p class="font-body-sm text-body-sm text-on-surface/60 italic">Upgrade to Lumina Pro for ad-free tools</p>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- BottomNavBar -->
+<nav class="fixed bottom-0 w-full z-50 rounded-t-xl bg-surface-container/80 backdrop-blur-xl border-t border-white/5 shadow-xl flex justify-around items-center h-20 px-md pb-safe">
+<!-- Compress (Active) -->
+<a class="flex flex-col items-center justify-center bg-primary-container text-on-primary-container rounded-full px-4 py-1 active:scale-90 transition-all duration-200 group" href="#">
+<span class="material-symbols-outlined active-glow" style="font-variation-settings: 'FILL' 1;">photo_size_select_small</span>
+<span class="font-label-caps text-label-caps mt-0.5">Compress</span>
+</a>
+<!-- Resize -->
+<a class="flex flex-col items-center justify-center text-on-surface-variant hover:text-primary active:scale-90 transition-all duration-200 group" href="#">
+<span class="material-symbols-outlined">aspect_ratio</span>
+<span class="font-label-caps text-label-caps mt-0.5">Resize</span>
+</a>
+<!-- Convert -->
+<a class="flex flex-col items-center justify-center text-on-surface-variant hover:text-primary active:scale-90 transition-all duration-200 group" href="#">
+<span class="material-symbols-outlined">transform</span>
+<span class="font-label-caps text-label-caps mt-0.5">Convert</span>
+</a>
+<!-- PDF -->
+<a class="flex flex-col items-center justify-center text-on-surface-variant hover:text-primary active:scale-90 transition-all duration-200 group" href="#">
+<span class="material-symbols-outlined">picture_as_pdf</span>
+<span class="font-label-caps text-label-caps mt-0.5">PDF</span>
+</a>
+</nav>
+<!-- Micro-interaction Script -->
+<script>
+        document.querySelectorAll('a, button').forEach(el => {
+            el.addEventListener('touchstart', () => {
+                el.style.opacity = '0.7';
+            });
+            el.addEventListener('touchend', () => {
+                el.style.opacity = '1';
+            });
+        });
+    </script>
+</body></html>

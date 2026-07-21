@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Lumina - Compress Images</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+        body {
+            font-family: 'Sora', sans-serif;
+            background-color: #0e0e12;
+            color: #e4e1e7;
+            margin: 0;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .gold-gradient {
+            background: linear-gradient(135deg, #ffd700 0%, #ff5540 100%);
+        }
+        .glass-card {
+            background: rgba(26, 26, 32, 0.6);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .custom-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            background: #ffd700;
+            border-radius: 50%;
+            cursor: pointer;
+            border: 2px solid #ffffff;
+            box-shadow: 0 0 10px rgba(255, 85, 64, 0.3);
+        }
+        .custom-slider {
+            -webkit-appearance: none;
+            width: 100%;
+            height: 4px;
+            background: #353439;
+            border-radius: 2px;
+            outline: none;
+        }
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-background": "#e4e1e7",
+                        "surface-variant": "#353439",
+                        "inverse-surface": "#e4e1e7",
+                        "tertiary": "#f7f4fe",
+                        "surface-bright": "#39393d",
+                        "surface-container-lowest": "#0e0e12",
+                        "tertiary-fixed-dim": "#c7c5ce",
+                        "on-tertiary-container": "#5f5e66",
+                        "on-surface-variant": "#d0c6ab",
+                        "on-secondary-fixed-variant": "#930100",
+                        "surface-container-highest": "#353439",
+                        "primary-fixed-dim": "#e9c400",
+                        "secondary-container": "#ff5540",
+                        "primary": "#fff6df",
+                        "secondary-fixed-dim": "#ffb4a8",
+                        "on-tertiary-fixed": "#1b1b22",
+                        "primary-fixed": "#ffe16d",
+                        "surface": "#131317",
+                        "surface-dim": "#131317",
+                        "secondary-fixed": "#ffdad4",
+                        "surface-tint": "#e9c400",
+                        "on-secondary-container": "#5c0000",
+                        "on-tertiary": "#303037",
+                        "on-primary": "#3a3000",
+                        "secondary": "#ffb4a8",
+                        "on-primary-fixed": "#221b00",
+                        "primary-container": "#ffd700",
+                        "outline": "#999077",
+                        "background": "#131317",
+                        "error-container": "#93000a",
+                        "surface-container": "#1f1f23",
+                        "surface-container-low": "#1b1b1f",
+                        "on-error-container": "#ffdad6",
+                        "error": "#ffb4ab",
+                        "on-secondary-fixed": "#410000",
+                        "tertiary-fixed": "#e4e1eb",
+                        "on-secondary": "#690100",
+                        "on-tertiary-fixed-variant": "#46464e",
+                        "inverse-on-surface": "#303034",
+                        "surface-container-high": "#2a292e",
+                        "on-surface": "#e4e1e7",
+                        "tertiary-container": "#dbd8e2",
+                        "inverse-primary": "#705d00",
+                        "outline-variant": "#4d4732",
+                        "on-primary-fixed-variant": "#544600",
+                        "on-error": "#690005",
+                        "on-primary-container": "#705e00"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "xl": "80px",
+                        "md": "24px",
+                        "sm": "12px",
+                        "margin-mobile": "16px",
+                        "lg": "48px",
+                        "xs": "4px",
+                        "margin-desktop": "40px",
+                        "gutter": "24px",
+                        "base": "8px"
+                    },
+                    "fontFamily": {
+                        "headline-md": ["Sora"],
+                        "body-lg": ["Sora"],
+                        "body-md": ["Sora"],
+                        "display-lg": ["Sora"],
+                        "label-sm": ["Sora"],
+                        "display-lg-mobile": ["Sora"]
+                    },
+                    "fontSize": {
+                        "headline-md": ["24px", {"lineHeight": "1.3", "fontWeight": "600"}],
+                        "body-lg": ["18px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                        "body-md": ["16px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                        "display-lg": ["48px", {"lineHeight": "1.1", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                        "label-sm": ["12px", {"lineHeight": "1", "letterSpacing": "0.05em", "fontWeight": "600"}],
+                        "display-lg-mobile": ["32px", {"lineHeight": "1.2", "letterSpacing": "-0.02em", "fontWeight": "700"}]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="flex flex-col min-h-screen">
+<!-- TopAppBar from JSON -->
+<header class="w-full top-0 sticky bg-surface/80 backdrop-blur-xl border-b border-white/10 flex items-center justify-between px-margin-mobile py-sm z-[60]">
+<div class="flex items-center gap-base">
+<span class="material-symbols-outlined text-primary" data-icon="flare">flare</span>
+<h1 class="font-display-lg-mobile text-display-lg-mobile bg-gradient-to-r from-primary via-secondary to-secondary-container bg-clip-text text-transparent">Lumina</h1>
+</div>
+<button class="active:scale-95 transition-transform hover:opacity-80 transition-opacity text-on-surface-variant">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+</button>
+</header>
+<main class="flex-1 px-margin-mobile pt-sm pb-32">
+<!-- Live Comparison Banner -->
+<div class="glass-card rounded-xl p-md mb-md flex justify-between items-center relative overflow-hidden">
+<div class="flex flex-col">
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-widest">Compression Live Preview</span>
+<div class="flex items-baseline gap-sm mt-xs">
+<span class="font-headline-md text-headline-md text-on-surface-variant opacity-40 line-through">4.2 MB</span>
+<span class="material-symbols-outlined text-secondary-container" data-icon="trending_flat">trending_flat</span>
+<span class="font-headline-md text-headline-md text-primary-fixed-dim font-extrabold">850 KB</span>
+</div>
+</div>
+<div class="bg-secondary-container/10 border border-secondary-container/30 px-sm py-xs rounded-full">
+<span class="font-label-sm text-label-sm text-secondary-container">-80%</span>
+</div>
+</div>
+<!-- Thumbnail Grid -->
+<section class="mb-lg">
+<div class="flex justify-between items-center mb-sm">
+<h2 class="font-headline-md text-[18px] text-on-background">Selected Files (4)</h2>
+<button class="text-primary text-[14px] font-semibold flex items-center gap-xs">
+<span class="material-symbols-outlined text-[18px]" data-icon="add_circle">add_circle</span> Add More
+                </button>
+</div>
+<div class="grid grid-cols-2 gap-sm">
+<!-- Thumbnail 1 -->
+<div class="relative group aspect-square rounded-xl overflow-hidden border border-white/5 bg-surface-container">
+<img class="w-full h-full object-cover" data-alt="A professional high-resolution travel photograph of a golden sunrise over a misty mountain range, featuring warm orange and red hues. The UI context is an image compression app with a sleek dark theme. The photo is displayed in a square thumbnail grid with slight rounded corners." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAUBEzFhWCr3lTSnTBKJh9T94xt4ho2FwYBY1W0JVzRNoM-onMFlvNqcYvNEt7stunZtjMJRGa7QB59sJz0xCd_kYyxJzjOYEyHxo1iuoF1ak4lznwrozTh_bGuNlnPt5aTgMHJwcfggCIZ2ejfxTRa7_xjLGe4CioxbavbdSWCZ79Rl0ebec0hvYZnNa9w9f7QjRh_Gu7wYmJaLFUcz2puZsPy7RQGgvE-5xAqY4vhSKybqQJ7PoPFBcyjkBMw0GdW5atCvxTcTm0"/>
+<div class="absolute bottom-0 left-0 right-0 p-xs bg-black/60 backdrop-blur-sm">
+<p class="text-[10px] text-white truncate px-xs">IMG_4829.jpg</p>
+</div>
+<button class="absolute top-1 right-1 bg-black/40 rounded-full p-xs hover:bg-red-500 transition-colors">
+<span class="material-symbols-outlined text-[16px] text-white" data-icon="close">close</span>
+</button>
+</div>
+<!-- Thumbnail 2 -->
+<div class="relative group aspect-square rounded-xl overflow-hidden border border-white/5 bg-surface-container">
+<img class="w-full h-full object-cover" data-alt="A macro close-up shot of a modern architectural structure with sharp metallic lines and a crimson red accent lighting. The image suggests precision and high technical quality. It is framed within a mobile app interface designed for tech enthusiasts, using a dark-mode palette with gold highlights." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDw8HbpQ4COA1bgrlTv2W9AeTYhu4enCd3RMccmRI8ZgMSxeTrnAQLnmnhUUtaUYxSF5jOKwXim2sqshIDhVwTd8qyPcn-2OLY5uLl5_VxU00D-mxwmcxmdBw5OyDMopa96LO3Hh1aKPlFnVq6DidNOX_Te-GJ0G_eeF1JSWbymTLPgwsizxijNx_3P0wlbbEvrh8m23HPmdv_UNgLIAuYlu5fNQ64ehWrBbH0ZpRgJw9QhH_lz4oIkGwcvtisc3-5kM5KX7mT9WwE"/>
+<div class="absolute bottom-0 left-0 right-0 p-xs bg-black/60 backdrop-blur-sm">
+<p class="text-[10px] text-white truncate px-xs">Architecture_Final.png</p>
+</div>
+<button class="absolute top-1 right-1 bg-black/40 rounded-full p-xs">
+<span class="material-symbols-outlined text-[16px] text-white" data-icon="close">close</span>
+</button>
+</div>
+<!-- Thumbnail 3 -->
+<div class="relative group aspect-square rounded-xl overflow-hidden border border-white/5 bg-surface-container">
+<img class="w-full h-full object-cover" data-alt="An artistic portrait of a person in a futuristic neon-lit city environment. The colors are dominated by deep purples and vibrant gold sparks reflecting off wet surfaces. This image is part of a gallery in a high-performance utility application for mobile devices." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCKc2BvnTQtGeTuTJpxiw2aI77FS5gXTRvy_s7JK2IAdehZpYKlZE6FyK43Vvr_ZiGMFR5iUS2DEaSMszMH-LwjxWPzQJOYDTOVQRkpA9S7NP5TVxOqEYOppUNrZhQYAw8Ez1EalJo-ujCuMPt6CCKOnWePFOr_qUMaamFxn0A8zbrE6pPSedyvScTaF_qSIP4BqtQvbRMYutgr1AaExU06mnteYIod3aDXwoOMwPVBhfGzt0TztgB5BldiFu_D1IpA3FfemfwPMo8"/>
+<div class="absolute bottom-0 left-0 right-0 p-xs bg-black/60 backdrop-blur-sm">
+<p class="text-[10px] text-white truncate px-xs">Portrait_Night.jpg</p>
+</div>
+<button class="absolute top-1 right-1 bg-black/40 rounded-full p-xs">
+<span class="material-symbols-outlined text-[16px] text-white" data-icon="close">close</span>
+</button>
+</div>
+<!-- Thumbnail 4 -->
+<div class="relative group aspect-square rounded-xl overflow-hidden border border-white/5 bg-surface-container">
+<img class="w-full h-full object-cover" data-alt="A minimalist landscape featuring a vast, empty desert at dusk. The sky transitions from a soft yellow to a deep, ignition-style crimson red. This clean and powerful image is shown as a thumbnail in a file compression tool interface." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBb8h7yJClJvr7HzGqXs2Rvq0XVjwMQ1oVXpkknI0s9VoLU_5Ki1rF-Cjpzp6OZx9AO2-Ppcg5Iax3_MSe4hW4Nrej-wPEY-DKKB4bm9yL_t93LJm40210tFYQgBq48zQXMRrNhcTKDo7mkAzBtg7TB24GIVqzNjQdxNkBWcD8OZl6Iwmr1VQbSFMHxaKuiRkh-cUtODCRaigtxNnkotAWXdOA1REUp2glRm_aR1oljZP2gjLJ9zBZYvUSJ-1guPHAZ1dd7Hzh0DYo"/>
+<div class="absolute bottom-0 left-0 right-0 p-xs bg-black/60 backdrop-blur-sm">
+<p class="text-[10px] text-white truncate px-xs">Desert_Dusk_02.jpg</p>
+</div>
+<button class="absolute top-1 right-1 bg-black/40 rounded-full p-xs">
+<span class="material-symbols-outlined text-[16px] text-white" data-icon="close">close</span>
+</button>
+</div>
+</div>
+</section>
+<!-- Controls -->
+<section class="glass-card rounded-2xl p-md">
+<h3 class="font-body-lg text-body-lg text-primary mb-md font-bold">Compression Settings</h3>
+<!-- Target Size Control -->
+<div class="space-y-md">
+<div class="flex justify-between items-center">
+<label class="font-label-sm text-label-sm text-on-surface-variant uppercase">Target File Size</label>
+<div class="flex items-center gap-xs">
+<input class="w-20 bg-surface-container-highest border-none rounded-lg text-right font-headline-md text-[16px] text-primary-fixed-dim focus:ring-1 focus:ring-primary-fixed" type="number" value="850"/>
+<span class="font-body-md text-on-surface-variant">KB</span>
+</div>
+</div>
+<input class="custom-slider w-full" max="4000" min="100" type="range" value="850"/>
+<div class="flex justify-between text-[10px] text-on-surface-variant opacity-60">
+<span>Smallest (100KB)</span>
+<span>Highest Quality (4MB)</span>
+</div>
+</div>
+<!-- Quality Presets -->
+<div class="mt-lg">
+<label class="font-label-sm text-label-sm text-on-surface-variant uppercase mb-sm block">Balance Mode</label>
+<div class="flex gap-sm">
+<button class="flex-1 py-sm px-xs rounded-xl border border-primary-fixed/20 bg-primary-fixed/10 text-primary text-[12px] font-semibold text-center transition-all">
+                        Balanced
+                    </button>
+<button class="flex-1 py-sm px-xs rounded-xl border border-white/5 bg-surface-container text-on-surface-variant text-[12px] font-semibold text-center hover:bg-surface-container-high transition-all">
+                        High Quality
+                    </button>
+<button class="flex-1 py-sm px-xs rounded-xl border border-white/5 bg-surface-container text-on-surface-variant text-[12px] font-semibold text-center hover:bg-surface-container-high transition-all">
+                        Ultra Small
+                    </button>
+</div>
+</div>
+</section>
+<!-- CTA Action -->
+<div class="fixed bottom-20 left-0 right-0 px-margin-mobile z-40">
+<button class="gold-gradient w-full py-md rounded-2xl flex items-center justify-center gap-sm shadow-[0_10px_30px_rgba(255,85,64,0.3)] active:scale-[0.98] transition-transform">
+<span class="material-symbols-outlined text-white" data-icon="auto_fix_high" style="font-variation-settings: 'FILL' 1;">auto_fix_high</span>
+<span class="text-white font-headline-md text-[18px] font-extrabold uppercase tracking-wide">Compress &amp; Save</span>
+</button>
+</div>
+</main>
+<!-- BottomNavBar from JSON -->
+<nav class="fixed bottom-0 w-full z-50 rounded-t-xl bg-surface-container/90 backdrop-blur-md border-t border-white/5 shadow-lg flex justify-around items-center h-16 px-4 pb-safe">
+<div class="flex flex-col items-center justify-center bg-secondary-container/20 text-primary rounded-full px-4 py-1 active:scale-90 transition-transform">
+<span class="material-symbols-outlined" data-icon="photo_size_select_small">photo_size_select_small</span>
+<span class="font-label-sm text-label-sm">Compress</span>
+</div>
+<div class="flex flex-col items-center justify-center text-on-surface-variant hover:text-primary transition-colors active:scale-90 transition-transform">
+<span class="material-symbols-outlined" data-icon="crop">crop</span>
+<span class="font-label-sm text-label-sm">Resize</span>
+</div>
+<div class="flex flex-col items-center justify-center text-on-surface-variant hover:text-primary transition-colors active:scale-90 transition-transform">
+<span class="material-symbols-outlined" data-icon="transform">transform</span>
+<span class="font-label-sm text-label-sm">Convert</span>
+</div>
+<div class="flex flex-col items-center justify-center text-on-surface-variant hover:text-primary transition-colors active:scale-90 transition-transform">
+<span class="material-symbols-outlined" data-icon="picture_as_pdf">picture_as_pdf</span>
+<span class="font-label-sm text-label-sm">PDF</span>
+</div>
+</nav>
+<script>
+        // Micro-interaction for slider update
+        const slider = document.querySelector('.custom-slider');
+        const numInput = document.querySelector('input[type="number"]');
+        
+        slider.addEventListener('input', (e) => {
+            numInput.value = e.target.value;
+            // Simulated live preview update logic could go here
+        });
+
+        numInput.addEventListener('input', (e) => {
+            slider.value = e.target.value;
+        });
+
+        // Simple button active state visual for presets
+        const presetBtns = document.querySelectorAll('section:last-of-type button');
+        presetBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                presetBtns.forEach(b => {
+                    b.classList.remove('border-primary-fixed/20', 'bg-primary-fixed/10', 'text-primary');
+                    b.classList.add('border-white/5', 'bg-surface-container', 'text-on-surface-variant');
+                });
+                btn.classList.add('border-primary-fixed/20', 'bg-primary-fixed/10', 'text-primary');
+                btn.classList.remove('border-white/5', 'bg-surface-container', 'text-on-surface-variant');
+            });
+        });
+    </script>
+</body></html>

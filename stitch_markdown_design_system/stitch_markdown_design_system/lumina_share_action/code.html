@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Lumina Share Sheet</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "on-background": "#e4e1e7",
+                    "surface-variant": "#353439",
+                    "inverse-surface": "#e4e1e7",
+                    "tertiary": "#f7f4fe",
+                    "surface-bright": "#39393d",
+                    "surface-container-lowest": "#0e0e12",
+                    "tertiary-fixed-dim": "#c7c5ce",
+                    "on-tertiary-container": "#5f5e66",
+                    "on-surface-variant": "#d0c6ab",
+                    "on-secondary-fixed-variant": "#930100",
+                    "surface-container-highest": "#353439",
+                    "primary-fixed-dim": "#e9c400",
+                    "secondary-container": "#ff5540",
+                    "primary": "#fff6df",
+                    "secondary-fixed-dim": "#ffb4a8",
+                    "on-tertiary-fixed": "#1b1b22",
+                    "primary-fixed": "#ffe16d",
+                    "surface": "#131317",
+                    "surface-dim": "#131317",
+                    "secondary-fixed": "#ffdad4",
+                    "surface-tint": "#e9c400",
+                    "on-secondary-container": "#5c0000",
+                    "on-tertiary": "#303037",
+                    "on-primary": "#3a3000",
+                    "secondary": "#ffb4a8",
+                    "on-primary-fixed": "#221b00",
+                    "primary-container": "#ffd700",
+                    "outline": "#999077",
+                    "background": "#131317",
+                    "error-container": "#93000a",
+                    "surface-container": "#1f1f23",
+                    "surface-container-low": "#1b1b1f",
+                    "on-error-container": "#ffdad6",
+                    "error": "#ffb4ab",
+                    "on-secondary-fixed": "#410000",
+                    "tertiary-fixed": "#e4e1eb",
+                    "on-secondary": "#690100",
+                    "on-tertiary-fixed-variant": "#46464e",
+                    "inverse-on-surface": "#303034",
+                    "surface-container-high": "#2a292e",
+                    "on-surface": "#e4e1e7",
+                    "tertiary-container": "#dbd8e2",
+                    "inverse-primary": "#705d00",
+                    "outline-variant": "#4d4732",
+                    "on-primary-fixed-variant": "#544600",
+                    "on-error": "#690005",
+                    "on-primary-container": "#705e00"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "xl": "80px",
+                    "md": "24px",
+                    "sm": "12px",
+                    "margin-mobile": "16px",
+                    "lg": "48px",
+                    "xs": "4px",
+                    "margin-desktop": "40px",
+                    "gutter": "24px",
+                    "base": "8px"
+            },
+            "fontFamily": {
+                    "headline-md": ["Sora"],
+                    "body-lg": ["Sora"],
+                    "body-md": ["Sora"],
+                    "display-lg": ["Sora"],
+                    "label-sm": ["Sora"],
+                    "display-lg-mobile": ["Sora"]
+            },
+            "fontSize": {
+                    "headline-md": ["24px", {"lineHeight": "1.3", "fontWeight": "600"}],
+                    "body-lg": ["18px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                    "body-md": ["16px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                    "display-lg": ["48px", {"lineHeight": "1.1", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                    "label-sm": ["12px", {"lineHeight": "1", "letterSpacing": "0.05em", "fontWeight": "600"}],
+                    "display-lg-mobile": ["32px", {"lineHeight": "1.2", "letterSpacing": "-0.02em", "fontWeight": "700"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .glass-panel {
+            background: rgba(31, 31, 35, 0.75);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        .action-card {
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .action-card:active {
+            transform: scale(0.95);
+            background: rgba(233, 196, 0, 0.1);
+        }
+        @keyframes slideUp {
+            from { transform: translateY(100%); }
+            to { transform: translateY(0); }
+        }
+        .animate-slide-up {
+            animation: slideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-surface-container-lowest text-on-surface font-body-md overflow-hidden h-screen w-screen flex flex-col">
+<!-- Mock Background App (Dimmed/Blurred Content) -->
+<main class="flex-grow relative p-margin-mobile blur-md brightness-50">
+<div class="max-w-md mx-auto space-y-md">
+<div class="aspect-square w-full rounded-xl overflow-hidden shadow-2xl border border-white/10" data-alt="A cinematic, high-detail photograph of a futuristic camera lens reflecting a sunset of deep gold and crimson. The background is a blurred cityscape of Tokyo at night, shimmering with neon lights. The aesthetic is ultra-modern, high-fidelity, and sleek, mirroring the Lumina brand identity with a focus on precision optics and vibrant energy." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuCumFC8Jtap1Y7DqsmBWywGbyU7IX4jS-0ksXzK97CnK_y2IGezKKkDPHYysCcnfk-OcrxZs6bnxbahUaGNUogpVKyTHxUfXag4oXiTvtBorw1t7BIySu-_hhzSuuDzvza1yb0W9-bzlzKSoPIdri5rfWwMf7s03e15AGZ4m--v7W6WdbFRAWlZbY5NxmmsIgI7utIlrmxGb2TNYczyQcVhxS4IyCNNBIA29x7SBhQwCDXxjHlN3RbHBpw0I6MO4dWdsxEaS-hmcVo')">
+</div>
+<div class="space-y-sm">
+<div class="h-6 w-3/4 bg-surface-container rounded-full opacity-50"></div>
+<div class="h-4 w-full bg-surface-container rounded-full opacity-30"></div>
+<div class="h-4 w-5/6 bg-surface-container rounded-full opacity-30"></div>
+</div>
+<div class="grid grid-cols-2 gap-sm">
+<div class="h-32 bg-surface-container rounded-xl opacity-20"></div>
+<div class="h-32 bg-surface-container rounded-xl opacity-20"></div>
+</div>
+</div>
+</main>
+<!-- Overlay Backdrop -->
+<div class="fixed inset-0 bg-black/40 z-40 transition-opacity"></div>
+<!-- Share Sheet Bottom Drawer -->
+<section class="fixed bottom-0 left-0 right-0 z-50 animate-slide-up">
+<div class="glass-panel rounded-t-[32px] px-margin-mobile pt-sm pb-10 max-w-lg mx-auto shadow-[0_-20px_50px_-12px_rgba(0,0,0,0.5)]">
+<!-- Handle -->
+<div class="flex justify-center mb-6">
+<div class="w-12 h-1.5 bg-surface-variant rounded-full"></div>
+</div>
+<!-- Header with Lumina Brand -->
+<div class="flex items-center justify-between mb-8">
+<div class="flex items-center gap-base">
+<span class="material-symbols-outlined text-primary-fixed-dim font-headline-md text-headline-md" style="font-variation-settings: 'FILL' 1;">flare</span>
+<h1 class="font-display-lg-mobile text-display-lg-mobile bg-gradient-to-r from-primary-fixed-dim via-secondary-container to-secondary-container bg-clip-text text-transparent tracking-tight">Lumina</h1>
+</div>
+<button class="w-10 h-10 flex items-center justify-center rounded-full bg-surface-variant/40 text-on-surface-variant hover:bg-surface-variant transition-colors">
+<span class="material-symbols-outlined">close</span>
+</button>
+</div>
+<!-- Preview Thumbnail -->
+<div class="flex items-center gap-md mb-8 p-sm bg-surface-container-low rounded-xl border border-white/5">
+<div class="w-16 h-16 rounded-lg overflow-hidden border border-white/10" data-alt="A macro shot of vibrant red and gold paint swirling in water, creating intricate organic patterns. The lighting is dramatic and technical, with sharp focus on the fluid textures. The overall mood is high-performance and creative, utilizing the brand's core crimson and gold palette in a sleek, abstract composition." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuBIKQ-S4Z5zuHhLqds0Kd-pyk6KKqFnLWXilfHAaMl2tyLartmm7os925tqNOF0Vj4trzmP5wJF7c837kBzDcDo1jDMBRRWZjfdQLW53vbqY-Ona59oNWHBbz8VpzMmQL8Ysvcz7chJNKY9L8iPVTND3hWjb4gtjxpLsH-TyaMR7ia7sTjEWOFCuDJn5ZdlDc200arc80qjfhsALk1LdxC_Y2xHz0O4Kx5Ebr0FoXgMU4cw-kN0AJAoi_fl-V5ILDrtAdCFXqPM-zQ')">
+</div>
+<div class="flex-grow overflow-hidden">
+<p class="font-headline-md text-headline-md-mobile text-on-surface truncate">DSC_0492_PRO.jpg</p>
+<p class="font-label-sm text-label-sm text-on-surface-variant">4.2 MB • 4032 × 3024</p>
+</div>
+</div>
+<!-- Main Actions Grid -->
+<div class="grid grid-cols-2 gap-sm mb-lg">
+<!-- Action: Compress -->
+<button class="action-card flex flex-col items-start gap-sm p-md bg-surface-container-high rounded-xl border border-white/5 hover:border-primary-fixed-dim/30">
+<div class="w-12 h-12 flex items-center justify-center rounded-full bg-primary-fixed-dim/10">
+<span class="material-symbols-outlined text-primary-fixed-dim text-[28px]">photo_size_select_small</span>
+</div>
+<div class="text-left">
+<span class="block font-headline-md text-headline-md-mobile text-on-surface">Compress</span>
+<span class="block font-label-sm text-label-sm text-on-surface-variant">Reduce file size</span>
+</div>
+</button>
+<!-- Action: Resize -->
+<button class="action-card flex flex-col items-start gap-sm p-md bg-surface-container-high rounded-xl border border-white/5 hover:border-primary-fixed-dim/30">
+<div class="w-12 h-12 flex items-center justify-center rounded-full bg-primary-fixed-dim/10">
+<span class="material-symbols-outlined text-primary-fixed-dim text-[28px]">crop</span>
+</div>
+<div class="text-left">
+<span class="block font-headline-md text-headline-md-mobile text-on-surface">Resize</span>
+<span class="block font-label-sm text-label-sm text-on-surface-variant">Change dimensions</span>
+</div>
+</button>
+<!-- Action: Convert -->
+<button class="action-card flex flex-col items-start gap-sm p-md bg-surface-container-high rounded-xl border border-white/5 hover:border-primary-fixed-dim/30">
+<div class="w-12 h-12 flex items-center justify-center rounded-full bg-primary-fixed-dim/10">
+<span class="material-symbols-outlined text-primary-fixed-dim text-[28px]">transform</span>
+</div>
+<div class="text-left">
+<span class="block font-headline-md text-headline-md-mobile text-on-surface">Convert</span>
+<span class="block font-label-sm text-label-sm text-on-surface-variant">WEBP, PNG, JPG</span>
+</div>
+</button>
+<!-- Action: PDF -->
+<button class="action-card flex flex-col items-start gap-sm p-md bg-surface-container-high rounded-xl border border-white/5 hover:border-primary-fixed-dim/30">
+<div class="w-12 h-12 flex items-center justify-center rounded-full bg-primary-fixed-dim/10">
+<span class="material-symbols-outlined text-primary-fixed-dim text-[28px]">picture_as_pdf</span>
+</div>
+<div class="text-left">
+<span class="block font-headline-md text-headline-md-mobile text-on-surface">PDF</span>
+<span class="block font-label-sm text-label-sm text-on-surface-variant">Export as document</span>
+</div>
+</button>
+</div>
+<!-- Additional Quick Options -->
+<div class="space-y-sm">
+<button class="w-full flex items-center justify-between p-md bg-surface-container rounded-xl text-on-surface hover:bg-surface-variant transition-colors group">
+<div class="flex items-center gap-sm">
+<span class="material-symbols-outlined text-on-surface-variant group-hover:text-primary-fixed-dim transition-colors">history</span>
+<span class="font-body-md">Recent Workflows</span>
+</div>
+<span class="material-symbols-outlined text-on-surface-variant">chevron_right</span>
+</button>
+<button class="w-full flex items-center justify-between p-md bg-surface-container rounded-xl text-on-surface hover:bg-surface-variant transition-colors group">
+<div class="flex items-center gap-sm">
+<span class="material-symbols-outlined text-on-surface-variant group-hover:text-primary-fixed-dim transition-colors">settings</span>
+<span class="font-body-md">Output Settings</span>
+</div>
+<span class="material-symbols-outlined text-on-surface-variant">chevron_right</span>
+</button>
+</div>
+</div>
+</section>
+<!-- Navigation Mirror (Suppressed by relevance check but structure kept for UI balance) -->
+<nav class="hidden md:flex fixed top-0 w-full z-[100] px-margin-desktop py-sm bg-surface/80 backdrop-blur-xl items-center justify-between">
+<div class="flex items-center gap-base">
+<span class="material-symbols-outlined text-primary-fixed-dim" style="font-variation-settings: 'FILL' 1;">flare</span>
+<span class="font-headline-md text-headline-md text-primary-fixed-dim">Lumina</span>
+</div>
+<div class="flex gap-md">
+<span class="text-primary-fixed-dim font-label-sm uppercase tracking-widest">Share Engine</span>
+</div>
+</nav>
+<script>
+        // Simple micro-interaction for the handle to close
+        document.querySelector('.fixed.inset-0').addEventListener('click', () => {
+            document.querySelector('.animate-slide-up').style.transform = 'translateY(100%)';
+            document.querySelector('.animate-slide-up').style.transition = 'transform 0.3s ease-in';
+            setTimeout(() => {
+                // In a real app this would close the sheet
+                console.log('Close sheet triggered');
+            }, 300);
+        });
+
+        // Button feedback
+        const cards = document.querySelectorAll('.action-card');
+        cards.forEach(card => {
+            card.addEventListener('click', () => {
+                // Simulate action start
+                card.classList.add('ring-2', 'ring-primary-fixed-dim/50');
+                setTimeout(() => {
+                    card.classList.remove('ring-2', 'ring-primary-fixed-dim/50');
+                }, 400);
+            });
+        });
+    </script>
+</body></html>

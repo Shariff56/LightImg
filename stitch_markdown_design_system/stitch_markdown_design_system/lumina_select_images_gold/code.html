@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Lumina - Select Images</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&amp;family=Inter:wght@400;500;600&amp;family=JetBrains+Mono:wght@500&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                "secondary": "#ffb4a8",
+                "on-primary-container": "#705e00",
+                "surface-container-highest": "#353439",
+                "primary-container": "#ffd700",
+                "on-tertiary-fixed": "#1b1b22",
+                "background": "#131317",
+                "inverse-on-surface": "#303034",
+                "primary-fixed-dim": "#e9c400",
+                "primary-fixed": "#ffe16d",
+                "tertiary-fixed": "#e4e1eb",
+                "surface-container": "#1f1f23",
+                "on-tertiary": "#303037",
+                "secondary-fixed-dim": "#ffb4a8",
+                "tertiary-container": "#dbd8e2",
+                "error": "#ffb4ab",
+                "on-primary-fixed": "#221b00",
+                "surface": "#131317",
+                "surface-dim": "#131317",
+                "on-error-container": "#ffdad6",
+                "on-primary-fixed-variant": "#544600",
+                "surface-tint": "#e9c400",
+                "on-error": "#690005",
+                "on-tertiary-container": "#5f5e66",
+                "on-background": "#e4e1e7",
+                "error-container": "#93000a",
+                "primary": "#ffd700",
+                "accent-red": "#FF0000",
+                "tertiary": "#f7f4fe",
+                "tertiary-fixed-dim": "#c7c5ce",
+                "on-tertiary-fixed-variant": "#46464e",
+                "on-surface": "#e4e1e7",
+                "secondary-fixed": "#ffdad4",
+                "outline-variant": "#4d4732",
+                "on-secondary": "#690100",
+                "on-surface-variant": "#d0c6ab",
+                "surface-variant": "#353439",
+                "surface-bright": "#39393d",
+                "inverse-primary": "#705d00",
+                "on-secondary-fixed": "#410000",
+                "surface-container-high": "#2a292e",
+                "inverse-surface": "#e4e1e7",
+                "on-secondary-fixed-variant": "#930100",
+                "secondary-container": "#ff5540",
+                "on-primary": "#3a3000",
+                "surface-container-lowest": "#0e0e12",
+                "surface-container-low": "#1b1b1f",
+                "on-secondary-container": "#5c0000",
+                "outline": "#999077",
+                "text-primary": "#F5F5F7",
+                "text-secondary": "#A0A0AC"
+            },
+            "borderRadius": {
+                "DEFAULT": "0.25rem",
+                "lg": "0.5rem",
+                "xl": "0.75rem",
+                "full": "9999px"
+            },
+            "spacing": {
+                "md": "24px",
+                "xl": "80px",
+                "lg": "48px",
+                "margin-desktop": "40px",
+                "base": "8px",
+                "gutter": "24px",
+                "margin-mobile": "16px",
+                "xs": "4px",
+                "sm": "12px",
+                "xxl": "32px",
+                "margin-tablet": "24px"
+            },
+            "fontFamily": {
+                "headline-md": ["Sora"],
+                "display-lg": ["Sora"],
+                "label-sm": ["Sora"],
+                "body-lg": ["Sora"],
+                "display-lg-mobile": ["Sora"],
+                "body-md": ["Sora"],
+                "label-caps": ["JetBrains Mono"],
+                "caption": ["Inter"],
+                "headline-sm": ["Sora"]
+            },
+            "fontSize": {
+                "headline-md": ["24px", {"lineHeight": "1.3", "fontWeight": "600"}],
+                "display-lg": ["48px", {"lineHeight": "1.1", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                "label-sm": ["12px", {"lineHeight": "1", "letterSpacing": "0.05em", "fontWeight": "600"}],
+                "body-lg": ["18px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                "display-lg-mobile": ["32px", {"lineHeight": "1.2", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                "body-md": ["16px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                "label-caps": ["12px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "500"}],
+                "caption": ["13px", {"lineHeight": "18px", "fontWeight": "400"}],
+                "headline-sm": ["20px", {"lineHeight": "28px", "fontWeight": "600"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        body {
+            background-color: #0E0E12;
+            color: #e4e1e7;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .image-tile-selected {
+            transform: scale(0.92);
+            border: 2px solid #ffd700;
+        }
+        .checkmark-active {
+            opacity: 1;
+            transform: scale(1);
+        }
+        .glass-panel {
+            background: rgba(26, 26, 34, 0.8);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+        }
+        /* Custom scrollbar for a cleaner look */
+        ::-webkit-scrollbar {
+            width: 4px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0E0E12;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #353439;
+            border-radius: 10px;
+        }
+    </style>
+<style>
+        body {
+            min-height: max(884px, 100dvh);
+        }
+    </style>
+</head>
+<body class="flex flex-col min-h-screen">
+<!-- TopAppBar Content -->
+<header class="w-full top-0 sticky z-50 bg-surface/80 backdrop-blur-xl border-b border-white/5 flex items-center justify-between px-margin-mobile h-16">
+<div class="flex items-center gap-4">
+<button class="p-2 -ml-2 rounded-full hover:bg-surface-variant/50 active:scale-95 transition-transform">
+<span class="material-symbols-outlined text-primary">arrow_back</span>
+</button>
+<h1 class="font-headline-sm text-headline-sm text-primary">Select Images</h1>
+</div>
+<div class="flex items-center">
+<button class="p-2 rounded-full hover:bg-surface-variant/50 active:scale-95 transition-transform text-on-surface-variant">
+<span class="material-symbols-outlined">filter_list</span>
+</button>
+<button class="p-2 rounded-full hover:bg-surface-variant/50 active:scale-95 transition-transform text-on-surface-variant">
+<span class="material-symbols-outlined">settings</span>
+</button>
+</div>
+</header>
+<!-- Content Canvas -->
+<main class="flex-1 px-1 pt-1 pb-32">
+<!-- Date Header -->
+<div class="px-margin-mobile py-sm">
+<span class="font-label-caps text-label-caps text-text-secondary uppercase tracking-widest">Recent Photos</span>
+</div>
+<!-- Image Grid -->
+<div class="grid grid-cols-3 gap-1" id="image-grid">
+<!-- JavaScript will populate tiles here for easier multi-select simulation -->
+</div>
+</main>
+<!-- Task-Focused Sticky Bottom Bar -->
+<footer class="fixed bottom-0 w-full z-50 rounded-t-xl glass-panel border-t border-white/5 shadow-xl transition-all duration-300" id="selection-footer">
+<div class="max-w-4xl mx-auto flex items-center justify-between px-margin-mobile h-24 pb-safe">
+<div class="flex flex-col">
+<span class="font-headline-sm text-headline-sm text-text-primary" id="selected-count">0 images selected</span>
+<span class="font-caption text-caption text-text-secondary">Batch process ready</span>
+</div>
+<button class="bg-gradient-to-r from-[#FFD700] to-[#FF0000] px-8 py-4 rounded-xl font-display-lg text-headline-sm text-on-primary shadow-lg shadow-primary/20 active:scale-95 transition-all flex items-center gap-2 group disabled:opacity-50 disabled:grayscale" disabled="" id="next-btn">
+                Next
+                <span class="material-symbols-outlined group-hover:translate-x-1 transition-transform">arrow_forward</span>
+</button>
+</div>
+</footer>
+<script>
+        const grid = document.getElementById('image-grid');
+        const selectedCountEl = document.getElementById('selected-count');
+        const nextBtn = document.getElementById('next-btn');
+        let selectedIndices = new Set();
+
+        const prompts = [
+            "A high-resolution mobile photography shot of a sleek, dark metallic smartphone resting on a minimalist concrete surface. The lighting is moody and professional, featuring soft gold and red neon highlights. The depth of field is shallow, focusing on the refined edges of the device.",
+            "A macro shot of vibrant gold-lit circuits inside a transparent computer casing. Glowing trails of electric amber and ruby energy pulse through the hardware. The atmosphere is futuristic and cybernetic, captured with a sharp professional lens in a dark-mode environment.",
+            "An abstract architectural photograph of a brutalist building facade at twilight. The concrete structures are bathed in deep indigo shadows and accented by sharp, warm gold light from interior windows. The composition is geometric and symmetrical.",
+            "A close-up of a high-end camera lens showing complex glass elements and multi-coatings that reflect a spectrum of gold and crimson light. The background is a velvety deep black, highlighting the precision and technical excellence of the optics.",
+            "A stunning aerial view of a futuristic city grid at night, where the streets are mapped by glowing ribbons of gold and red traffic lights. The urban layout looks like a digital motherboard, perfectly aligned and efficient.",
+            "A creative flat-lay of professional digital tools including a stylus, a minimalist tablet, and geometric black blocks on a dark charcoal background. Subtle rim lighting in warm amber defines the shapes, creating a focused workspace atmosphere.",
+            "A minimalist nature photograph of a single geometric crystalline structure glowing from within with a soft red light. It sits on a dark obsidian base in a misty, dark environment. The contrast creates a sense of high-end utility.",
+            "An artistic representation of data flow, showing thousands of tiny glass spheres catching light as they cascade through a dark void. The light is a gradient of golden yellow to deep red, creating a shimmering, fluid motion.",
+            "A wide-angle shot of a serene, dark-themed modern studio with high-tech displays showing complex data visualizations in gold and red tones. The room is mostly in shadows, reflecting onto polished dark floors.",
+            "A macro detail of a premium metallic texture, showing brushed aluminum with a subtle gold tint. The light grazes the surface to reveal fine lines and precision engineering. It conveys a sense of durable, high-quality hardware.",
+            "A composite image of a nebula-like cloud of gas and stars, but styled with a corporate modern aesthetic. The colors are strictly limited to Lumina's brand palette of deep blacks, primary gold, and accent red.",
+            "A studio portrait of a sleek, black electric vehicle's headlight, featuring intricate LED patterns. The lighting is ultra-modern, with a soft golden glow that creates a gradient effect on the car's body."
+        ];
+
+        function createTile(index) {
+            const container = document.createElement('div');
+            container.className = 'relative aspect-square overflow-hidden bg-surface-container cursor-pointer transition-all duration-300 active:scale-95';
+            container.dataset.index = index;
+
+            const img = document.createElement('div');
+            img.className = 'w-full h-full bg-cover bg-center transition-transform duration-500 hover:scale-110';
+            img.style.backgroundImage = "url('https://images.unsplash.com/photo-" + (1500000000000 + index) + "?auto=format&fit=crop&w=400&q=80')"; // Dynamic placeholder logic
+            img.style.backgroundColor = "#1f1f23";
+            img.setAttribute('data-alt', prompts[index % prompts.length]);
+
+            const overlay = document.createElement('div');
+            overlay.className = 'absolute inset-0 bg-primary/20 opacity-0 transition-opacity duration-300 flex items-center justify-center';
+            overlay.id = `overlay-${index}`;
+
+            const checkmark = document.createElement('div');
+            checkmark.className = 'absolute top-2 right-2 w-7 h-7 rounded-full bg-primary text-on-primary flex items-center justify-center scale-0 transition-transform duration-300 shadow-lg';
+            checkmark.innerHTML = '<span class="material-symbols-outlined text-lg" style="font-variation-settings: \'FILL\' 1;">check_circle</span>';
+            checkmark.id = `check-${index}`;
+
+            container.appendChild(img);
+            container.appendChild(overlay);
+            container.appendChild(checkmark);
+
+            container.onclick = () => toggleSelection(index, container, overlay, checkmark);
+            return container;
+        }
+
+        function toggleSelection(index, container, overlay, checkmark) {
+            if (selectedIndices.has(index)) {
+                selectedIndices.delete(index);
+                container.classList.remove('image-tile-selected', 'z-10');
+                overlay.classList.add('opacity-0');
+                checkmark.classList.remove('scale-100');
+                checkmark.classList.add('scale-0');
+            } else {
+                selectedIndices.add(index);
+                container.classList.add('image-tile-selected', 'z-10');
+                overlay.classList.remove('opacity-0');
+                checkmark.classList.add('scale-100');
+                checkmark.classList.remove('scale-0');
+            }
+            updateFooter();
+        }
+
+        function updateFooter() {
+            const count = selectedIndices.size;
+            selectedCountEl.innerText = count === 1 ? '1 image selected' : `${count} images selected`;
+            
+            if (count > 0) {
+                nextBtn.disabled = false;
+            } else {
+                nextBtn.disabled = true;
+            }
+        }
+
+        // Initialize grid
+        for (let i = 0; i < 21; i++) {
+            grid.appendChild(createTile(i));
+        }
+    </script>
+</body></html>
