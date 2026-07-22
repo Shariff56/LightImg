@@ -16,7 +16,7 @@ class CompressImageUseCaseTest {
     private val useCase = CompressImageUseCase(context = android.app.Application())
 
     @Test
-    fun `binarySearch returns bytes within target`() {
+    fun binarySearchReturnsBytesWithinTarget() {
         val bitmap = Bitmap.createBitmap(100, 100, Bitmap.Config.ARGB_8888)
         val targetBytes = 5_000L
         val result = useCase.binarySearchCompress(bitmap, targetBytes)
