@@ -1,0 +1,10 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24">
+  <!-- Resize/crop icon: crop tool with corner handles -->
+  <path
+      android:fillColor="#FFFFFF"
+      android:pathData="M7,2v5H2v2h5v8H2v2h5v3h2v-3h8v3h2v-3h3v-2h-3V9h3V7h-3V2h-2v5H9V2H7z M9,9h6v6H9V9z"/>
+</vector>

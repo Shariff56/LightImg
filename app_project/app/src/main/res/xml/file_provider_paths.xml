@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<paths xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- LightImg output files in external files directory -->
+    <external-files-path name="lightimg_outputs" path="Pictures/LightImg/" />
+    <!-- Also allow sharing from cache directory if needed -->
+    <cache-path name="lightimg_cache" path="." />
+</paths>

@@ -1,0 +1,15 @@
+<resources>
+    <string name="app_name">LightImg</string>
+    <string name="compress_tab">Compress</string>
+    <string name="resize_tab">Resize</string>
+    <string name="convert_tab">Convert</string>
+    <string name="pdf_tab">PDF</string>
+    <string name="settings_title">Settings</string>
+    <string name="select_images">Select Images</string>
+    <string name="compress_save">Compress &amp; Save</string>
+    <string name="apply_save">Apply &amp; Save</string>
+    <string name="convert_save">Convert &amp; Save</string>
+    <string name="create_pdf">Create PDF</string>
+    <string name="fileprovider_authority">com.example.lightimg.fileprovider</string>
+    <string name="privacy_statement">This app does not collect or transmit any user files or personal data. Image processing is done entirely on your device. Ad serving is handled by Google AdMob per Google\'s own privacy policy.</string>
+</resources>
