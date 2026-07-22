@@ -1,6 +1,7 @@
 package com.example.lightimg.domain.usecase
 
 import android.content.Context
+import android.graphics.Bitmap
 import android.graphics.Rect
 import com.example.lightimg.data.imageprocessing.BitmapUtils
 import com.example.lightimg.data.files.ScopedStorageHelper

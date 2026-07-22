@@ -13,7 +13,7 @@ import org.junit.Test
  */
 class CompressImageUseCaseTest {
 
-    private val useCase = FakeCompressUseCase()
+    private val useCase = CompressImageUseCase(context = android.app.Application())
 
     @Test
     fun `binarySearch returns bytes within target`() {
@@ -30,7 +30,6 @@ class CompressImageUseCaseTest {
     @Test
     fun `binarySearch returns quality=1 when target is impossibly small`() {
         val bitmap = Bitmap.createBitmap(500, 500, Bitmap.Config.ARGB_8888)
-        // Tiny target: 1 byte — binary search should bottom out at quality=1
         val result = useCase.binarySearchCompress(bitmap, 1L)
         assertTrue(
             "Result size should be > 0",
@@ -47,12 +46,5 @@ class CompressImageUseCaseTest {
         assertTrue(result.size <= bigTarget)
         bitmap.recycle()
     }
-
-    /** Subclass that exposes the package-private binarySearchCompress for testing. */
-    private inner class FakeCompressUseCase : CompressImageUseCase(
-        // Context is not used in binarySearchCompress, pass null stub
-        context = android.app.Application()
-    ) {
-        // inherits binarySearchCompress as-is
-    }
 }
+
