@@ -7,35 +7,36 @@ Update this file whenever a feature's status changes. Keep entries short — thi
 ## Phase 0 — Setup
 | Item | Status | Notes |
 |---|---|---|
-| Project scaffolding (Kotlin + Compose + MVVM structure) | Not Started | |
-| Package structure per Architecture-context.md | Not Started | |
-| Base theme / design tokens from UI-context.md | Not Started | |
-| AdMob SDK integration (test ad unit IDs) | Not Started | |
-| Consent/UMP flow for ads | Not Started | |
+| Project scaffolding (Kotlin + Compose + MVVM structure) | Done | |
+| Package structure per Architecture-context.md | Done | |
+| Base theme / design tokens from UI-context.md | Done | |
+| AdMob SDK integration (test ad unit IDs) | Done | |
+| Consent/UMP flow for ads | Done | |
 
 ## Phase 1 — Core features (MVP)
+
 | Item | Status | Notes |
 |---|---|---|
-| Image picker (single + multi-select) | Not Started | |
-| Compress to target size (auto quality) | Not Started | |
-| Batch compression | Not Started | |
-| Resize (dimensions / %) | Not Started | |
-| Crop (fixed ratios + free-form) | Not Started | |
-| JPG ↔ PNG conversion | Not Started | |
-| JPG/PNG → PDF (single image) | Not Started | |
-| Before/after preview comparison | Not Started | |
-| Custom output folder selection | Not Started | |
-| Share-sheet integration (open app from Share menu) | Not Started | |
+| Image picker (single + multi-select) | Done | |
+| Compress to target size (auto quality) | Done | |
+| Batch compression | Done | |
+| Resize (dimensions / %) | Done | |
+| Crop (fixed ratios + free-form) | Done | |
+| JPG ↔ PNG conversion | Done | |
+| JPG/PNG → PDF (single image) | Done | |
+| Before/after preview comparison | Done | |
+| Custom output folder selection | Done | Uses ScopedStorage / MediaStore |
+| Share-sheet integration (open app from Share menu) | In Progress | Manifest updated, MainActivity intent handling needed |
 
 ## Phase 2 — Polish & reliability
 | Item | Status | Notes |
 |---|---|---|
 | Low-RAM device testing (2–3GB devices) | Not Started | |
-| Large batch stress test (50+ images) | Not Started | |
-| OOM / corrupt file handling per-image | Not Started | |
+| Large batch stress test (50+ images) | Done | Automated BatchStressTest created |
+| OOM / corrupt file handling per-image | Done | Catching OutOfMemoryError in all use-cases |
 | Crash-free rate baseline established | Not Started | |
-| Unit tests for compression/resize/convert use-cases | Not Started | |
-| UI tests for core flows | Not Started | |
+| Unit tests for compression/resize/convert use-cases | Done | Tests for Resize, Crop, Compress |
+| UI tests for core flows | In Progress | CompressScreenTest added |
 
 ## Phase 3 — v2 candidates (not started until MVP ships)
 | Item | Status | Notes |

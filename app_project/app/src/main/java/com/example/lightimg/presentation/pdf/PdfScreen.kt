@@ -71,6 +71,7 @@ import kotlinx.coroutines.launch
 data class PdfUiState(
     val images: List<ImageItem>  = emptyList(),
     val pageSize: PdfPageSize    = PdfPageSize.A4,
+    val applyFilter: Boolean     = false,
     val isProcessing: Boolean    = false,
     val result: PdfResult?       = null,
 )
@@ -93,12 +94,16 @@ class PdfViewModel(private val createPdfUseCase: CreatePdfUseCase) : ViewModel()
         _uiState.update { it.copy(pageSize = size) }
     }
 
+    fun onFilterToggled(enabled: Boolean) {
+        _uiState.update { it.copy(applyFilter = enabled) }
+    }
+
     fun onCreatePdfClicked() {
         val images = _uiState.value.images
         if (images.isEmpty()) return
         _uiState.update { it.copy(isProcessing = true) }
         viewModelScope.launch {
-            val result = createPdfUseCase(images, _uiState.value.pageSize)
+            val result = createPdfUseCase(images, _uiState.value.pageSize, _uiState.value.applyFilter)
             _uiState.update { it.copy(isProcessing = false, result = result) }
         }
     }
@@ -205,8 +210,10 @@ fun PdfScreen(viewModel: PdfViewModel, modifier: Modifier = Modifier) {
             }
         } else {
             item {
+                val screenWidthDp = androidx.compose.ui.platform.LocalConfiguration.current.screenWidthDp
+                val cellHeight = (screenWidthDp - 32 - 12) / 2 // 32dp horizontal padding, 12dp spacing
                 val rowCount = (state.images.size + 1) / 2
-                val gridHeight = (rowCount * 180 + 50).dp
+                val gridHeight = (rowCount * cellHeight + (rowCount - 1) * 12).dp
                 LazyVerticalGrid(
                     columns = GridCells.Fixed(2),
                     contentPadding = PaddingValues(horizontal = 16.dp),
@@ -235,6 +242,30 @@ fun PdfScreen(viewModel: PdfViewModel, modifier: Modifier = Modifier) {
                 ) {
                     Icon(Icons.Default.Add, contentDescription = null, tint = GradientPurple, modifier = Modifier.size(20.dp))
                     Text("  Add Images", color = GradientPurple, fontSize = 14.sp, fontWeight = FontWeight.Medium)
+                }
+            }
+        }
+        // Enhancement toggle
+        if (state.images.isNotEmpty()) {
+            item {
+                Row(
+                    modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 8.dp)
+                        .clip(RoundedCornerShape(16.dp)).background(SurfaceCard)
+                        .padding(16.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    Column(modifier = Modifier.weight(1f)) {
+                        Text("B&W Document Mode", color = TextPrimary, fontSize = 16.sp, fontWeight = FontWeight.SemiBold)
+                        Text("Applies high contrast black and white filter", color = TextSecondary, fontSize = 12.sp)
+                    }
+                    androidx.compose.material3.Switch(
+                        checked = state.applyFilter,
+                        onCheckedChange = { viewModel.onFilterToggled(it) },
+                        colors = androidx.compose.material3.SwitchDefaults.colors(
+                            checkedThumbColor = Color.White,
+                            checkedTrackColor = GradientPurple
+                        )
+                    )
                 }
             }
         }

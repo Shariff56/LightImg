@@ -34,6 +34,7 @@ class CreatePdfUseCase(private val context: Context) {
     suspend operator fun invoke(
         images: List<ImageItem>,
         pageSize: PdfPageSize,
+        applyDocumentFilter: Boolean = false,
     ): PdfResult = withContext(Dispatchers.Default) {
         if (images.isEmpty()) return@withContext PdfResult.Error("No images provided")
 
@@ -50,7 +51,7 @@ class CreatePdfUseCase(private val context: Context) {
                 val pageInfo = PdfDocument.PageInfo.Builder(pageW, pageH, pageNumber).create()
                 val page     = pdfDocument.startPage(pageInfo)
 
-                drawBitmapCentered(page.canvas, bitmap, pageW, pageH)
+                drawBitmapCentered(page.canvas, bitmap, pageW, pageH, applyDocumentFilter)
                 pdfDocument.finishPage(page)
                 bitmap.recycle()
                 pageNumber++
@@ -69,6 +70,8 @@ class CreatePdfUseCase(private val context: Context) {
             stream.use { pdfDocument.writeTo(it) }
 
             PdfResult.Success(outputUri = uri, pageCount = actualPages)
+        } catch (e: OutOfMemoryError) {
+            PdfResult.Error("Image too large to process for PDF on this device")
         } catch (e: Exception) {
             PdfResult.Error("PDF creation failed: ${e.message}")
         } finally {
@@ -83,7 +86,7 @@ class CreatePdfUseCase(private val context: Context) {
             PdfPageSize.FIT_TO_IMAGE -> Pair(bitmap.width, bitmap.height)
         }
 
-    private fun drawBitmapCentered(canvas: Canvas, bitmap: Bitmap, pageW: Int, pageH: Int) {
+    private fun drawBitmapCentered(canvas: Canvas, bitmap: Bitmap, pageW: Int, pageH: Int, applyDocumentFilter: Boolean) {
         canvas.drawColor(Color.WHITE)
         val scale  = minOf(pageW.toFloat() / bitmap.width, pageH.toFloat() / bitmap.height)
         val drawW  = (bitmap.width  * scale).toInt()
@@ -91,6 +94,23 @@ class CreatePdfUseCase(private val context: Context) {
         val left   = (pageW - drawW) / 2
         val top    = (pageH - drawH) / 2
         val dest   = Rect(left, top, left + drawW, top + drawH)
-        canvas.drawBitmap(bitmap, null, dest, Paint(Paint.FILTER_BITMAP_FLAG))
+        
+        val paint = Paint(Paint.FILTER_BITMAP_FLAG)
+        if (applyDocumentFilter) {
+            val cm = android.graphics.ColorMatrix()
+            cm.setSaturation(0f)
+            val contrast = 1.5f
+            val translate = -50f
+            val contrastMatrix = android.graphics.ColorMatrix(floatArrayOf(
+                contrast, 0f, 0f, 0f, translate,
+                0f, contrast, 0f, 0f, translate,
+                0f, 0f, contrast, 0f, translate,
+                0f, 0f, 0f, 1f, 0f
+            ))
+            cm.postConcat(contrastMatrix)
+            paint.colorFilter = android.graphics.ColorMatrixColorFilter(cm)
+        }
+        
+        canvas.drawBitmap(bitmap, null, dest, paint)
     }
 }

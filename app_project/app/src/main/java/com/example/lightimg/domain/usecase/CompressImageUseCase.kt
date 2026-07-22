@@ -47,7 +47,7 @@ class CompressImageUseCase(private val context: Context) {
 
             CompressResult.Success(
                 outputUri            = uri,
-                originalSizeBytes    = image.sizeBytes,
+                originalSizeBytes    = if (image.sizeBytes > 0) image.sizeBytes else null,
                 compressedSizeBytes  = compressedBytes.size.toLong(),
             )
         } catch (e: OutOfMemoryError) {

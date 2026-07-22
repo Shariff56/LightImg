@@ -156,7 +156,16 @@ fun ResizeCropScreen(viewModel: ResizeCropViewModel, modifier: Modifier = Modifi
                     w = options.outWidth
                     h = options.outHeight
                 }
-            } catch (e: Exception) {}
+            } catch (_: Exception) {}
+
+            if (w <= 0 || h <= 0) {
+                android.widget.Toast.makeText(
+                    context,
+                    "Unable to read image dimensions",
+                    android.widget.Toast.LENGTH_SHORT,
+                ).show()
+                return@let
+            }
 
             viewModel.onImageSelected(ImageItem(it, name, size, w, h, "image/jpeg"))
         }

@@ -112,6 +112,12 @@ fun InteractiveCropCanvas(
         onCropRectChanged(Rect(realLeft, realTop, realRight, realBottom))
     }
 
+    val currentCropBoxLeft by rememberUpdatedState(cropBoxLeft)
+    val currentCropBoxTop by rememberUpdatedState(cropBoxTop)
+    val currentCropBoxRight by rememberUpdatedState(cropBoxRight)
+    val currentCropBoxBottom by rememberUpdatedState(cropBoxBottom)
+    val currentUpdateCrop by rememberUpdatedState { dx: Float, dy: Float, edge: String -> updateCrop(dx, dy, edge) }
+
     Box(
         modifier = modifier
             .fillMaxSize()
@@ -125,19 +131,19 @@ fun InteractiveCropCanvas(
                     onDragStart = { offset ->
                         val touchRadius = 80f
                         draggedEdge = when {
-                            offset.x in (cropBoxLeft - touchRadius)..(cropBoxLeft + touchRadius) &&
-                            offset.y in (cropBoxTop - touchRadius)..(cropBoxTop + touchRadius) -> "TOP_LEFT"
+                            offset.x in (currentCropBoxLeft - touchRadius)..(currentCropBoxLeft + touchRadius) &&
+                            offset.y in (currentCropBoxTop - touchRadius)..(currentCropBoxTop + touchRadius) -> "TOP_LEFT"
                             
-                            offset.x in (cropBoxRight - touchRadius)..(cropBoxRight + touchRadius) &&
-                            offset.y in (cropBoxTop - touchRadius)..(cropBoxTop + touchRadius) -> "TOP_RIGHT"
+                            offset.x in (currentCropBoxRight - touchRadius)..(currentCropBoxRight + touchRadius) &&
+                            offset.y in (currentCropBoxTop - touchRadius)..(currentCropBoxTop + touchRadius) -> "TOP_RIGHT"
                             
-                            offset.x in (cropBoxLeft - touchRadius)..(cropBoxLeft + touchRadius) &&
-                            offset.y in (cropBoxBottom - touchRadius)..(cropBoxBottom + touchRadius) -> "BOTTOM_LEFT"
+                            offset.x in (currentCropBoxLeft - touchRadius)..(currentCropBoxLeft + touchRadius) &&
+                            offset.y in (currentCropBoxBottom - touchRadius)..(currentCropBoxBottom + touchRadius) -> "BOTTOM_LEFT"
                             
-                            offset.x in (cropBoxRight - touchRadius)..(cropBoxRight + touchRadius) &&
-                            offset.y in (cropBoxBottom - touchRadius)..(cropBoxBottom + touchRadius) -> "BOTTOM_RIGHT"
+                            offset.x in (currentCropBoxRight - touchRadius)..(currentCropBoxRight + touchRadius) &&
+                            offset.y in (currentCropBoxBottom - touchRadius)..(currentCropBoxBottom + touchRadius) -> "BOTTOM_RIGHT"
                             
-                            offset.x in cropBoxLeft..cropBoxRight && offset.y in cropBoxTop..cropBoxBottom -> "CENTER"
+                            offset.x in currentCropBoxLeft..currentCropBoxRight && offset.y in currentCropBoxTop..currentCropBoxBottom -> "CENTER"
                             
                             else -> null
                         }
@@ -145,7 +151,7 @@ fun InteractiveCropCanvas(
                     onDrag = { change, dragAmount ->
                         change.consume()
                         draggedEdge?.let { edge ->
-                            updateCrop(dragAmount.x, dragAmount.y, edge)
+                            currentUpdateCrop(dragAmount.x, dragAmount.y, edge)
                         }
                     },
                     onDragEnd = { draggedEdge = null }

@@ -45,7 +45,21 @@ class ConvertImageUseCase(private val context: Context) {
             stream.use { bitmap.compress(format, quality, it) }
             bitmap.recycle()
 
-            ConvertResult.Success(outputUri = uri, newMimeType = targetFormat.mimeType)
+            var newSizeBytes: Long? = null
+            try {
+                context.contentResolver.openFileDescriptor(uri, "r")?.use { fd ->
+                    if (fd.statSize > 0) newSizeBytes = fd.statSize
+                }
+            } catch (e: Exception) {
+                // Ignore if we can't get size
+            }
+
+            ConvertResult.Success(
+                outputUri = uri, 
+                newMimeType = targetFormat.mimeType,
+                originalSizeBytes = if (image.sizeBytes > 0) image.sizeBytes else null,
+                convertedSizeBytes = newSizeBytes
+            )
         } catch (e: OutOfMemoryError) {
             ConvertResult.Error("Image too large to convert on this device")
         } catch (e: Exception) {

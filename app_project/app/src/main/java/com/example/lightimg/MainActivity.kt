@@ -41,8 +41,17 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             LightImgTheme {
-                LightImgApp(context = this)
+                LightImgApp(context = this.applicationContext)
             }
+        }
+    }
+}
+
+@Suppress("UNCHECKED_CAST")
+inline fun <reified T : androidx.lifecycle.ViewModel> viewModelFactory(crossinline creator: () -> T): androidx.lifecycle.ViewModelProvider.Factory {
+    return object : androidx.lifecycle.ViewModelProvider.Factory {
+        override fun <V : androidx.lifecycle.ViewModel> create(modelClass: Class<V>): V {
+            return creator() as V
         }
     }
 }
@@ -50,7 +59,6 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun LightImgApp(context: android.content.Context) {
     var currentScreen: Screen by remember { mutableStateOf(Screen.Home) }
-    var showSettings by remember { mutableStateOf(false) }
 
     // Manual DI — use cases created with application context
     val compressUseCase = remember { CompressImageUseCase(context) }
@@ -58,11 +66,6 @@ fun LightImgApp(context: android.content.Context) {
     val cropUseCase     = remember { com.example.lightimg.domain.usecase.CropImageUseCase(context) }
     val convertUseCase  = remember { ConvertImageUseCase(context) }
     val pdfUseCase      = remember { CreatePdfUseCase(context) }
-
-    if (showSettings) {
-        SettingsScreen(onBack = { showSettings = false })
-        return
-    }
 
     Scaffold(
         containerColor = Background,
@@ -82,26 +85,34 @@ fun LightImgApp(context: android.content.Context) {
             when (currentScreen) {
                 Screen.Home -> HomeScreen(
                     onNavigate     = { currentScreen = it },
-                    onSettingsClick = { showSettings = true },
+                    onSettingsClick = { currentScreen = Screen.Settings },
                 )
 
                 Screen.Compress -> {
-                    val vm = remember { CompressViewModel(compressUseCase) }
+                    val vm: CompressViewModel = androidx.lifecycle.viewmodel.compose.viewModel(
+                        factory = viewModelFactory { CompressViewModel(compressUseCase) }
+                    )
                     CompressScreen(viewModel = vm)
                 }
 
                 Screen.ResizeCrop -> {
-                    val vm = remember { ResizeCropViewModel(resizeUseCase, cropUseCase) }
+                    val vm: ResizeCropViewModel = androidx.lifecycle.viewmodel.compose.viewModel(
+                        factory = viewModelFactory { ResizeCropViewModel(resizeUseCase, cropUseCase) }
+                    )
                     ResizeCropScreen(viewModel = vm)
                 }
 
                 Screen.Convert -> {
-                    val vm = remember { ConvertViewModel(convertUseCase) }
+                    val vm: ConvertViewModel = androidx.lifecycle.viewmodel.compose.viewModel(
+                        factory = viewModelFactory { ConvertViewModel(convertUseCase) }
+                    )
                     ConvertScreen(viewModel = vm)
                 }
 
                 Screen.Pdf -> {
-                    val vm = remember { PdfViewModel(pdfUseCase) }
+                    val vm: PdfViewModel = androidx.lifecycle.viewmodel.compose.viewModel(
+                        factory = viewModelFactory { PdfViewModel(pdfUseCase) }
+                    )
                     PdfScreen(viewModel = vm)
                 }
 

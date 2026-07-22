@@ -436,6 +436,27 @@ private fun CompressionSettingsCard(
                 Text("50 KB", color = TextMuted, fontSize = 12.sp)
                 Text("5000 KB", color = TextMuted, fontSize = 12.sp)
             }
+
+            Spacer(Modifier.height(16.dp))
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                listOf(100, 500, 1024, 2048).forEach { presetKb ->
+                    val label = if (presetKb >= 1024) "${presetKb / 1024} MB" else "$presetKb KB"
+                    val isSelected = targetSizeKb == presetKb
+                    Box(
+                        modifier = Modifier.weight(1f)
+                            .clip(RoundedCornerShape(8.dp))
+                            .background(if (isSelected) GradientPurple else SurfaceElevated)
+                            .clickable { onSizeChanged(presetKb) }
+                            .padding(vertical = 8.dp),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text(label, color = if (isSelected) Color.White else TextPrimary, fontSize = 12.sp, fontWeight = FontWeight.Medium)
+                    }
+                }
+            }
         }
     }
 }
@@ -446,9 +467,33 @@ private fun CompressResultSheet(
     onDismiss: () -> Unit,
     onSave: () -> Unit,
 ) {
-    val successCount = results.filterIsInstance<CompressResult.Success>().size
-    val totalSaved = results.filterIsInstance<CompressResult.Success>()
-        .sumOf { it.originalSizeBytes - it.compressedSizeBytes }
+    val successResults = results.filterIsInstance<CompressResult.Success>()
+    val successCount = successResults.size
+    
+    var validSizes = false
+    var totalSaved = 0L
+    var totalIncreased = 0L
+    
+    for (res in successResults) {
+        if (res.originalSizeBytes != null && res.compressedSizeBytes != null) {
+            validSizes = true
+            val diff = res.originalSizeBytes - res.compressedSizeBytes
+            if (diff > 0) totalSaved += diff
+            else totalIncreased += -diff
+        }
+    }
+
+    val sizeText = if (!validSizes) {
+        "Size information unavailable"
+    } else if (totalSaved > 0 && totalIncreased == 0L) {
+        "Saved ${formatBytes(totalSaved)}"
+    } else if (totalSaved == 0L && totalIncreased > 0L) {
+        "Increased by ${formatBytes(totalIncreased)}"
+    } else if (totalSaved > 0 && totalIncreased > 0L) {
+        "Saved ${formatBytes(totalSaved)} (some increased)"
+    } else {
+        "No change in size"
+    }
 
     // Simple bottom sheet using Box overlay
     Box(
@@ -465,7 +510,7 @@ private fun CompressResultSheet(
             Column(modifier = Modifier.padding(24.dp)) {
                 Text("✓ Done!", color = SuccessGreen, fontSize = 22.sp, fontWeight = FontWeight.Bold)
                 Spacer(Modifier.height(8.dp))
-                Text("$successCount image(s) compressed · Saved ${formatBytes(totalSaved)}", color = TextSecondary, fontSize = 14.sp)
+                Text("$successCount image(s) compressed · $sizeText", color = TextSecondary, fontSize = 14.sp)
                 Spacer(Modifier.height(20.dp))
                 Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
                     androidx.compose.material3.Button(

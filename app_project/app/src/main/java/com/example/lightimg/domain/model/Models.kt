@@ -16,8 +16,8 @@ data class ImageItem(
 sealed class CompressResult {
     data class Success(
         val outputUri: Uri,
-        val originalSizeBytes: Long,
-        val compressedSizeBytes: Long,
+        val originalSizeBytes: Long?,
+        val compressedSizeBytes: Long?,
     ) : CompressResult()
     data class Error(val message: String) : CompressResult()
 }
@@ -37,6 +37,8 @@ sealed class ConvertResult {
     data class Success(
         val outputUri: Uri,
         val newMimeType: String,
+        val originalSizeBytes: Long?,
+        val convertedSizeBytes: Long?,
     ) : ConvertResult()
     data class Error(val message: String) : ConvertResult()
 }

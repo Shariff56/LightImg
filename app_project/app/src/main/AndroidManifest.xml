@@ -14,6 +14,10 @@
         android:name="android.permission.READ_EXTERNAL_STORAGE"
         android:maxSdkVersion="32"
         android:minSdkVersion="24" />
+    <!-- Pre-Q (API 28): needed for saving legacy PDF files to Downloads -->
+    <uses-permission
+        android:name="android.permission.WRITE_EXTERNAL_STORAGE"
+        android:maxSdkVersion="28" />
 
     <application
         android:allowBackup="false"
@@ -25,10 +29,10 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.LightImg">
 
-        <!-- AdMob App ID (test ID — replace before production release) -->
+        <!-- AdMob App ID (injected from build.gradle.kts) -->
         <meta-data
             android:name="com.google.android.gms.ads.APPLICATION_ID"
-            android:value="ca-app-pub-3940256099942544~3347511713" />
+            android:value="${ADMOB_APP_ID}" />
 
         <!-- Opt-out of Ad ID auto-init to respect UMP consent flow -->
         <meta-data

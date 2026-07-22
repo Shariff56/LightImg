@@ -113,14 +113,20 @@ class CompressViewModel(
     fun onSaveToDevice(context: android.content.Context, onComplete: (Boolean) -> Unit) {
         viewModelScope.launch(kotlinx.coroutines.Dispatchers.IO) {
             var allSuccess = true
+            var anySaved = false
             _uiState.value.results.forEach { result ->
                 if (result is CompressResult.Success) {
                     val success = com.example.lightimg.data.files.ScopedStorageHelper.saveToMediaStore(context, result.outputUri, "image/jpeg")
-                    if (!success) allSuccess = false
+                    if (success) {
+                        anySaved = true
+                    } else {
+                        allSuccess = false
+                    }
                 }
             }
+            val finalSuccess = anySaved && allSuccess
             kotlinx.coroutines.withContext(kotlinx.coroutines.Dispatchers.Main) {
-                onComplete(allSuccess)
+                onComplete(finalSuccess)
             }
         }
     }

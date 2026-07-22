@@ -3,6 +3,7 @@ package com.example.lightimg.data.imageprocessing
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.media.ExifInterface
 import android.net.Uri
 import android.os.Build
 import androidx.annotation.WorkerThread
@@ -47,7 +48,7 @@ object BitmapUtils {
         opts.inJustDecodeBounds = false
         opts.inPreferredConfig = Bitmap.Config.ARGB_8888
 
-        return try {
+        var bitmap = try {
             context.contentResolver.openInputStream(uri)?.use { s ->
                 BitmapFactory.decodeStream(s, null, opts)
             }
@@ -61,7 +62,19 @@ object BitmapUtils {
             } catch (e2: OutOfMemoryError) {
                 null
             }
+        } ?: return null
+
+        var orientation = ExifInterface.ORIENTATION_NORMAL
+        try {
+            context.contentResolver.openInputStream(uri)?.use { s ->
+                val exif = ExifInterface(s)
+                orientation = exif.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL)
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
         }
+
+        return rotateBitmapIfNeeded(bitmap, orientation)
     }
 
     /**
@@ -74,14 +87,42 @@ object BitmapUtils {
         maxDimension: Int,
     ): Int {
         var sampleSize = 1
-        var halfWidth = rawWidth / 2
-        var halfHeight = rawHeight / 2
-        while (halfWidth > maxDimension || halfHeight > maxDimension) {
+        while ((rawWidth / sampleSize) > maxDimension || (rawHeight / sampleSize) > maxDimension) {
             sampleSize *= 2
-            halfWidth /= 2
-            halfHeight /= 2
         }
         return sampleSize
+    }
+
+    private fun rotateBitmapIfNeeded(bitmap: Bitmap, orientation: Int): Bitmap {
+        val matrix = android.graphics.Matrix()
+        when (orientation) {
+            ExifInterface.ORIENTATION_ROTATE_90 -> matrix.postRotate(90f)
+            ExifInterface.ORIENTATION_ROTATE_180 -> matrix.postRotate(180f)
+            ExifInterface.ORIENTATION_ROTATE_270 -> matrix.postRotate(270f)
+            ExifInterface.ORIENTATION_FLIP_HORIZONTAL -> matrix.preScale(-1.0f, 1.0f)
+            ExifInterface.ORIENTATION_FLIP_VERTICAL -> {
+                matrix.preScale(1.0f, -1.0f)
+            }
+            ExifInterface.ORIENTATION_TRANSPOSE -> {
+                matrix.preScale(-1.0f, 1.0f)
+                matrix.postRotate(270f)
+            }
+            ExifInterface.ORIENTATION_TRANSVERSE -> {
+                matrix.preScale(-1.0f, 1.0f)
+                matrix.postRotate(90f)
+            }
+            else -> return bitmap
+        }
+        return try {
+            val rotated = Bitmap.createBitmap(bitmap, 0, 0, bitmap.width, bitmap.height, matrix, true)
+            if (rotated != bitmap) {
+                bitmap.recycle()
+            }
+            rotated
+        } catch (e: OutOfMemoryError) {
+            bitmap.recycle()
+            throw e
+        }
     }
 
     /**

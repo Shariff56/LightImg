@@ -72,12 +72,40 @@ object ScopedStorageHelper {
             }
 
             val isPdf = mimeType == "application/pdf"
-            val collection = if (isPdf) {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                    MediaStore.Downloads.getContentUri(MediaStore.VOLUME_EXTERNAL_PRIMARY)
-                } else {
-                    MediaStore.Files.getContentUri("external")
+
+            if (isPdf && Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) {
+                if (androidx.core.content.ContextCompat.checkSelfPermission(context, android.Manifest.permission.WRITE_EXTERNAL_STORAGE) != android.content.pm.PackageManager.PERMISSION_GRANTED) {
+                    return false
                 }
+                val downloadsDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
+                if (!downloadsDir.exists()) downloadsDir.mkdirs()
+                
+                var destFile = File(downloadsDir, displayName)
+                var counter = 1
+                while (destFile.exists()) {
+                    val nameWithoutExt = displayName.substringBeforeLast(".")
+                    val ext = displayName.substringAfterLast(".", "")
+                    val newName = if (ext.isNotEmpty()) "${nameWithoutExt}_${counter}.$ext" else "${nameWithoutExt}_${counter}"
+                    destFile = File(downloadsDir, newName)
+                    counter++
+                }
+
+                try {
+                    resolver.openInputStream(cachedUri)?.use { input ->
+                        java.io.FileOutputStream(destFile).use { output ->
+                            input.copyTo(output)
+                        }
+                    } ?: throw Exception("Failed to open input stream")
+                    android.media.MediaScannerConnection.scanFile(context, arrayOf(destFile.absolutePath), arrayOf("application/pdf"), null)
+                    return true
+                } catch (e: Exception) {
+                    if (destFile.exists()) destFile.delete()
+                    return false
+                }
+            }
+
+            val collection = if (isPdf) {
+                MediaStore.Downloads.getContentUri(MediaStore.VOLUME_EXTERNAL_PRIMARY)
             } else {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
                     MediaStore.Images.Media.getContentUri(MediaStore.VOLUME_EXTERNAL_PRIMARY)
@@ -98,18 +126,27 @@ object ScopedStorageHelper {
 
             val destUri = resolver.insert(collection, values) ?: return false
 
-            resolver.openInputStream(cachedUri)?.use { input ->
-                resolver.openOutputStream(destUri)?.use { output ->
-                    input.copyTo(output)
+            try {
+                val input = resolver.openInputStream(cachedUri) ?: throw Exception("Failed to open input stream")
+                val output = resolver.openOutputStream(destUri) ?: throw Exception("Failed to open output stream")
+                
+                input.use { inStream ->
+                    output.use { outStream ->
+                        inStream.copyTo(outStream)
+                    }
                 }
-            }
 
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                values.clear()
-                values.put(MediaStore.MediaColumns.IS_PENDING, 0)
-                resolver.update(destUri, values, null, null)
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                    values.clear()
+                    values.put(MediaStore.MediaColumns.IS_PENDING, 0)
+                    val rows = resolver.update(destUri, values, null, null)
+                    if (rows == 0) throw Exception("Failed to update IS_PENDING status")
+                }
+                true
+            } catch (e: Exception) {
+                resolver.delete(destUri, null, null)
+                throw e
             }
-            true
         } catch (e: Exception) {
             e.printStackTrace()
             false

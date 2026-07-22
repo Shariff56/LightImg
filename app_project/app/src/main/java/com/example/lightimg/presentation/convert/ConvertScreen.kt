@@ -217,6 +217,19 @@ fun ConvertScreen(viewModel: ConvertViewModel, modifier: Modifier = Modifier) {
                         when (result) {
                             is ConvertResult.Success -> {
                                 Text("✓ Converted successfully!", color = SuccessGreen, fontWeight = FontWeight.Bold)
+                                Spacer(Modifier.height(8.dp))
+                                if (result.originalSizeBytes != null && result.convertedSizeBytes != null) {
+                                    val savings = result.originalSizeBytes - result.convertedSizeBytes
+                                    if (savings > 0) {
+                                        Text("Saved ${formatBytes(savings)}", color = TextSecondary, fontSize = 14.sp)
+                                    } else if (savings < 0) {
+                                        Text("Size increased by ${formatBytes(-savings)}", color = TextSecondary, fontSize = 14.sp)
+                                    } else {
+                                        Text("No size change", color = TextSecondary, fontSize = 14.sp)
+                                    }
+                                } else {
+                                    Text("Size information unavailable", color = TextSecondary, fontSize = 14.sp)
+                                }
                                 Spacer(Modifier.height(16.dp))
                                 androidx.compose.material3.Button(
                                     onClick = {
@@ -295,4 +308,10 @@ private fun FormatToggle(selected: ImageFormat, onSelect: (ImageFormat) -> Unit,
             }
         }
     }
+}
+
+private fun formatBytes(bytes: Long): String = when {
+    bytes >= 1_048_576 -> "%.1f MB".format(bytes / 1_048_576f)
+    bytes >= 1_024     -> "${bytes / 1_024} KB"
+    else               -> "$bytes B"
 }

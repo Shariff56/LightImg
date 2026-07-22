@@ -19,9 +19,12 @@ android {
         release {
             isMinifyEnabled = true
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
+            val releaseAdMobId = project.findProperty("ADMOB_APP_ID") as? String
+            manifestPlaceholders["ADMOB_APP_ID"] = releaseAdMobId ?: ""
         }
         debug {
             isMinifyEnabled = false
+            manifestPlaceholders["ADMOB_APP_ID"] = "ca-app-pub-3940256099942544~3347511713" // Demo ID
         }
     }
     compileOptions {
@@ -97,4 +100,17 @@ dependencies {
   androidTestImplementation(libs.androidx.test.ext.junit)
   androidTestImplementation(libs.androidx.test.runner)
   androidTestImplementation(libs.androidx.test.espresso.core)
+}
+
+gradle.taskGraph.whenReady {
+    val isBuildingRelease = allTasks.any { task ->
+        task.name.contains("Release", ignoreCase = true) && 
+        (task.name.startsWith("assemble") || task.name.startsWith("bundle") || task.name.startsWith("build"))
+    }
+    if (isBuildingRelease) {
+        val releaseAdMobId = project.findProperty("ADMOB_APP_ID") as? String
+        if (releaseAdMobId.isNullOrBlank()) {
+            throw GradleException("ADMOB_APP_ID property is missing or empty for release build.")
+        }
+    }
 }
