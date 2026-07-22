@@ -26,3 +26,18 @@ Since privacy is a primary selling point for this app, doubling down on offline 
 
 * **Before/After Storage Savings:** On the success screen after a batch job, show a compelling metric: "You saved 124 MB of space." This provides instant positive reinforcement for using the app.
 * **Quick Share Actions:** After processing, alongside the default share sheet, offer quick-actions for the most common targets (e.g., "Share to WhatsApp", "Share to Gmail") to save a tap.
+
+## 5. Online & Cloud-Based Functionalities (Pivot from Offline-Only)
+
+*Note: Adding these features represents a pivot from the original "offline-only, no-backend" constraint outlined in the project documentation. These suggestions leverage an online connection to offer premium features and increase ad-impressions.*
+
+* **Cloud Backup & Sync:** Allow users to create an account and sync their original and processed images across devices. This creates a stickier user experience and more opportunities for ad placements.
+* **Server-Side AI Enhancements:** Offload heavy image processing (like AI upscaling, generative fill, or advanced background removal) to a backend server. This allows for complex features that wouldn't run well on low-end devices.
+* **Cloud Storage Integrations:** Direct integration with Google Drive, Dropbox, and OneDrive to import and export files directly from the cloud without taking up local storage.
+* **Shareable Web Links:** Instead of saving a large PDF locally, the app can host the generated PDF on a secure server and provide a short, shareable link for the user.
+
+## 6. Portability & Cross-Platform
+
+* **Kotlin Multiplatform (KMP):** Migrate the core domain and data logic (like the use cases and models) to Kotlin Multiplatform. This would allow you to share the business logic with an iOS app in the future.
+* **Web App Version (Compose Multiplatform / Wasm):** Since the app is built with Jetpack Compose, you can leverage Compose Multiplatform to compile the app to WebAssembly (Wasm) and offer a web-based version of the image utility, reaching desktop users and generating web-based ad revenue.
+* **Desktop Client:** Offer native MacOS and Windows clients using Compose Desktop, providing a unified toolset across all of a user's devices.
