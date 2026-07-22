@@ -1,8 +1,10 @@
 package com.example.lightimg.data.files
 
+import android.content.ContentValues
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
+import android.os.Build
 import android.os.Environment
 import android.provider.MediaStore
 import androidx.core.content.FileProvider
@@ -42,16 +44,75 @@ object ScopedStorageHelper {
             val timestamp = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US).format(Date())
             val fileName  = "${baseName}${suffix}_$timestamp.$extension"
 
-            val dir = File(
-                context.getExternalFilesDir(Environment.DIRECTORY_PICTURES),
-                "LightImg"
-            ).also { it.mkdirs() }
+            val dir = File(context.cacheDir, "LightImg_Cache").also { it.mkdirs() }
 
             val file = File(dir, fileName)
             val uri  = FileProvider.getUriForFile(context, AUTHORITY, file)
             Pair(uri, file.outputStream())
         } catch (e: Exception) {
             null
+        }
+    }
+
+    /**
+     * Copies a cached Uri to the public MediaStore.
+     * @return True if successfully saved to MediaStore.
+     */
+    fun saveToMediaStore(context: Context, cachedUri: Uri, mimeType: String): Boolean {
+        return try {
+            val resolver = context.contentResolver
+            // Get original filename from cache Uri
+            var displayName = "LightImg_${System.currentTimeMillis()}"
+            val cursor = resolver.query(cachedUri, null, null, null, null)
+            cursor?.use {
+                if (it.moveToFirst()) {
+                    val idx = it.getColumnIndex(android.provider.OpenableColumns.DISPLAY_NAME)
+                    if (idx >= 0) displayName = it.getString(idx)
+                }
+            }
+
+            val isPdf = mimeType == "application/pdf"
+            val collection = if (isPdf) {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                    MediaStore.Downloads.getContentUri(MediaStore.VOLUME_EXTERNAL_PRIMARY)
+                } else {
+                    MediaStore.Files.getContentUri("external")
+                }
+            } else {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                    MediaStore.Images.Media.getContentUri(MediaStore.VOLUME_EXTERNAL_PRIMARY)
+                } else {
+                    MediaStore.Images.Media.EXTERNAL_CONTENT_URI
+                }
+            }
+
+            val values = ContentValues().apply {
+                put(MediaStore.MediaColumns.DISPLAY_NAME, displayName)
+                put(MediaStore.MediaColumns.MIME_TYPE, mimeType)
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                    val folder = if (isPdf) Environment.DIRECTORY_DOCUMENTS else Environment.DIRECTORY_PICTURES
+                    put(MediaStore.MediaColumns.RELATIVE_PATH, "$folder/LightImg")
+                    put(MediaStore.MediaColumns.IS_PENDING, 1)
+                }
+            }
+
+            val destUri = resolver.insert(collection, values) ?: return false
+
+            resolver.openInputStream(cachedUri)?.use { input ->
+                resolver.openOutputStream(destUri)?.use { output ->
+                    input.copyTo(output)
+                }
+            }
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                values.clear()
+                values.put(MediaStore.MediaColumns.IS_PENDING, 0)
+                resolver.update(destUri, values, null, null)
+            }
+            true
+        } catch (e: Exception) {
+            e.printStackTrace()
+            false
         }
     }
 

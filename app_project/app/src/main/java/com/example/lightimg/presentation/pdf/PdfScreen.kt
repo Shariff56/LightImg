@@ -102,6 +102,19 @@ class PdfViewModel(private val createPdfUseCase: CreatePdfUseCase) : ViewModel()
             _uiState.update { it.copy(isProcessing = false, result = result) }
         }
     }
+
+    fun onSaveToDevice(context: android.content.Context, onComplete: (Boolean) -> Unit) {
+        viewModelScope.launch(kotlinx.coroutines.Dispatchers.IO) {
+            val result = _uiState.value.result
+            var success = false
+            if (result is com.example.lightimg.domain.model.PdfResult.Success) {
+                success = com.example.lightimg.data.files.ScopedStorageHelper.saveToMediaStore(context, result.outputUri, "application/pdf")
+            }
+            kotlinx.coroutines.withContext(kotlinx.coroutines.Dispatchers.Main) {
+                onComplete(success)
+            }
+        }
+    }
 }
 
 // ── Screen ───────────────────────────────────────────────────────────────────
@@ -245,8 +258,23 @@ fun PdfScreen(viewModel: PdfViewModel, modifier: Modifier = Modifier) {
                 Card(modifier = Modifier.fillMaxWidth().padding(16.dp), colors = CardDefaults.cardColors(SurfaceCard), shape = RoundedCornerShape(16.dp)) {
                     Column(Modifier.padding(16.dp)) {
                         when (result) {
-                            is PdfResult.Success -> Text("✓ PDF created! (${result.pageCount} pages)", color = SuccessGreen, fontWeight = FontWeight.Bold)
-                            is PdfResult.Error   -> Text("✗ ${result.message}", color = com.example.lightimg.theme.ErrorRed)
+                            is com.example.lightimg.domain.model.PdfResult.Success -> {
+                                Text("✓ PDF Created!", color = SuccessGreen, fontWeight = FontWeight.Bold)
+                                Spacer(Modifier.height(16.dp))
+                                androidx.compose.material3.Button(
+                                    onClick = {
+                                        viewModel.onSaveToDevice(context) { success ->
+                                            val msg = if (success) "Saved to Documents!" else "Failed to save"
+                                            android.widget.Toast.makeText(context, msg, android.widget.Toast.LENGTH_SHORT).show()
+                                        }
+                                    },
+                                    modifier = Modifier.fillMaxWidth(),
+                                    colors = androidx.compose.material3.ButtonDefaults.buttonColors(containerColor = GradientPurple)
+                                ) {
+                                    Text("Download PDF to Device", color = Color.White)
+                                }
+                            }
+                            is com.example.lightimg.domain.model.PdfResult.Error   -> Text("✗ ${result.message}", color = com.example.lightimg.theme.ErrorRed)
                         }
                     }
                 }

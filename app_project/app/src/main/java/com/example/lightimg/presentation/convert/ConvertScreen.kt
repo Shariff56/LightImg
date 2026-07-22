@@ -91,6 +91,20 @@ class ConvertViewModel(private val convertUseCase: ConvertImageUseCase) : ViewMo
             _uiState.update { it.copy(isProcessing = false, result = result) }
         }
     }
+
+    fun onSaveToDevice(context: android.content.Context, onComplete: (Boolean) -> Unit) {
+        viewModelScope.launch(kotlinx.coroutines.Dispatchers.IO) {
+            val result = _uiState.value.result
+            var success = false
+            if (result is ConvertResult.Success) {
+                val mime = if (result.outputUri.toString().endsWith("png")) "image/png" else "image/jpeg"
+                success = com.example.lightimg.data.files.ScopedStorageHelper.saveToMediaStore(context, result.outputUri, mime)
+            }
+            kotlinx.coroutines.withContext(kotlinx.coroutines.Dispatchers.Main) {
+                onComplete(success)
+            }
+        }
+    }
 }
 
 // ── Screen ───────────────────────────────────────────────────────────────────
@@ -201,7 +215,22 @@ fun ConvertScreen(viewModel: ConvertViewModel, modifier: Modifier = Modifier) {
                 ) {
                     Column(modifier = Modifier.padding(16.dp)) {
                         when (result) {
-                            is ConvertResult.Success -> Text("✓ Converted successfully!", color = SuccessGreen, fontWeight = FontWeight.Bold)
+                            is ConvertResult.Success -> {
+                                Text("✓ Converted successfully!", color = SuccessGreen, fontWeight = FontWeight.Bold)
+                                Spacer(Modifier.height(16.dp))
+                                androidx.compose.material3.Button(
+                                    onClick = {
+                                        viewModel.onSaveToDevice(context) { success ->
+                                            val msg = if (success) "Saved to Gallery!" else "Failed to save"
+                                            android.widget.Toast.makeText(context, msg, android.widget.Toast.LENGTH_SHORT).show()
+                                        }
+                                    },
+                                    modifier = Modifier.fillMaxWidth(),
+                                    colors = androidx.compose.material3.ButtonDefaults.buttonColors(containerColor = GradientPurple)
+                                ) {
+                                    Text("Download to Gallery", color = Color.White)
+                                }
+                            }
                             is ConvertResult.Error   -> Text("✗ ${result.message}", color = com.example.lightimg.theme.ErrorRed)
                         }
                     }

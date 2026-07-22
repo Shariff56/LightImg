@@ -55,6 +55,7 @@ fun LightImgApp(context: android.content.Context) {
     // Manual DI — use cases created with application context
     val compressUseCase = remember { CompressImageUseCase(context) }
     val resizeUseCase   = remember { ResizeImageUseCase(context) }
+    val cropUseCase     = remember { com.example.lightimg.domain.usecase.CropImageUseCase(context) }
     val convertUseCase  = remember { ConvertImageUseCase(context) }
     val pdfUseCase      = remember { CreatePdfUseCase(context) }
 
@@ -90,7 +91,7 @@ fun LightImgApp(context: android.content.Context) {
                 }
 
                 Screen.ResizeCrop -> {
-                    val vm = remember { ResizeCropViewModel(resizeUseCase) }
+                    val vm = remember { ResizeCropViewModel(resizeUseCase, cropUseCase) }
                     ResizeCropScreen(viewModel = vm)
                 }
 

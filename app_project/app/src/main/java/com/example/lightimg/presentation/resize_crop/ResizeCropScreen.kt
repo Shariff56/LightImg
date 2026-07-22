@@ -84,9 +84,14 @@ data class ResizeCropUiState(
     val result: ResizeResult?       = null,
 )
 
-class ResizeCropViewModel(private val resizeUseCase: ResizeImageUseCase) : ViewModel() {
+class ResizeCropViewModel(
+    private val resizeUseCase: ResizeImageUseCase,
+    private val cropUseCase: com.example.lightimg.domain.usecase.CropImageUseCase
+) : ViewModel() {
     private val _uiState = MutableStateFlow(ResizeCropUiState())
     val uiState: StateFlow<ResizeCropUiState> = _uiState.asStateFlow()
+
+    var currentCropRect: android.graphics.Rect = android.graphics.Rect(0, 0, 0, 0)
 
     fun onImageSelected(image: ImageItem) {
         _uiState.update { it.copy(selectedImage = image, targetWidth = image.width.toString(), targetHeight = image.height.toString(), result = null) }
@@ -98,14 +103,35 @@ class ResizeCropViewModel(private val resizeUseCase: ResizeImageUseCase) : ViewM
     fun onAspectChanged(ratio: AspectRatio) { _uiState.update { it.copy(selectedAspect = ratio) } }
     fun onLockToggled() { _uiState.update { it.copy(lockAspect = !it.lockAspect) } }
 
+    fun onCropRectChanged(rect: android.graphics.Rect) {
+        currentCropRect = rect
+    }
+
     fun onApplyClicked() {
         val image = _uiState.value.selectedImage ?: return
-        val w = _uiState.value.targetWidth.toIntOrNull() ?: 0
-        val h = _uiState.value.targetHeight.toIntOrNull() ?: 0
         _uiState.update { it.copy(isProcessing = true) }
         viewModelScope.launch {
-            val result = resizeUseCase(image, w, h, _uiState.value.lockAspect)
+            val result = if (_uiState.value.mode == ResizeCropMode.RESIZE) {
+                val w = _uiState.value.targetWidth.toIntOrNull() ?: 0
+                val h = _uiState.value.targetHeight.toIntOrNull() ?: 0
+                resizeUseCase(image, w, h, _uiState.value.lockAspect)
+            } else {
+                cropUseCase(image, currentCropRect)
+            }
             _uiState.update { it.copy(isProcessing = false, result = result) }
+        }
+    }
+
+    fun onSaveToDevice(context: android.content.Context, onComplete: (Boolean) -> Unit) {
+        viewModelScope.launch(kotlinx.coroutines.Dispatchers.IO) {
+            val result = _uiState.value.result
+            var success = false
+            if (result is ResizeResult.Success) {
+                success = com.example.lightimg.data.files.ScopedStorageHelper.saveToMediaStore(context, result.outputUri, "image/jpeg")
+            }
+            kotlinx.coroutines.withContext(kotlinx.coroutines.Dispatchers.Main) {
+                onComplete(success)
+            }
         }
     }
 }
@@ -122,6 +148,16 @@ fun ResizeCropScreen(viewModel: ResizeCropViewModel, modifier: Modifier = Modifi
             val cursor = context.contentResolver.query(it, null, null, null, null)
             var name = "image.jpg"; var size = 0L; var w = 0; var h = 0
             cursor?.use { c -> val ni = c.getColumnIndex(android.provider.OpenableColumns.DISPLAY_NAME); val si = c.getColumnIndex(android.provider.OpenableColumns.SIZE); if (c.moveToFirst()) { if (ni >= 0) name = c.getString(ni); if (si >= 0) size = c.getLong(si) } }
+            
+            try {
+                context.contentResolver.openInputStream(it)?.use { stream ->
+                    val options = android.graphics.BitmapFactory.Options().apply { inJustDecodeBounds = true }
+                    android.graphics.BitmapFactory.decodeStream(stream, null, options)
+                    w = options.outWidth
+                    h = options.outHeight
+                }
+            } catch (e: Exception) {}
+
             viewModel.onImageSelected(ImageItem(it, name, size, w, h, "image/jpeg"))
         }
     }
@@ -144,17 +180,25 @@ fun ResizeCropScreen(viewModel: ResizeCropViewModel, modifier: Modifier = Modifi
                 }
             } else {
                 Box(
-                    modifier = Modifier.fillMaxWidth().height(260.dp).padding(16.dp)
+                    modifier = Modifier.fillMaxWidth().height(360.dp).padding(16.dp)
                         .clip(RoundedCornerShape(20.dp)).background(SurfaceCard),
                 ) {
-                    AsyncImage(
-                        model = state.selectedImage!!.uri,
-                        contentDescription = state.selectedImage!!.displayName,
-                        contentScale = ContentScale.Crop,
-                        modifier = Modifier.fillMaxSize(),
-                    )
-                    // Overlay grid lines for visual crop feel
-                    Box(modifier = Modifier.fillMaxSize().border(2.dp, Color(0xFFEFB100), RoundedCornerShape(0.dp)))
+                    if (state.mode == ResizeCropMode.CROP) {
+                        InteractiveCropCanvas(
+                            imageUri = state.selectedImage!!.uri,
+                            imageWidth = state.selectedImage!!.width,
+                            imageHeight = state.selectedImage!!.height,
+                            modifier = Modifier.fillMaxSize(),
+                            onCropRectChanged = { viewModel.onCropRectChanged(it) }
+                        )
+                    } else {
+                        AsyncImage(
+                            model = state.selectedImage!!.uri,
+                            contentDescription = state.selectedImage!!.displayName,
+                            contentScale = ContentScale.Fit,
+                            modifier = Modifier.fillMaxSize(),
+                        )
+                    }
                 }
             }
         }
@@ -183,29 +227,7 @@ fun ResizeCropScreen(viewModel: ResizeCropViewModel, modifier: Modifier = Modifi
                 Spacer(Modifier.height(12.dp))
             }
 
-            // Aspect ratio chips (shown in Crop mode)
-            if (state.mode == ResizeCropMode.CROP) {
-                item {
-                    Card(modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp), colors = CardDefaults.cardColors(SurfaceCard), shape = RoundedCornerShape(16.dp)) {
-                        Column(Modifier.padding(16.dp)) {
-                            Text("Aspect Ratio", color = TextPrimary, fontSize = 17.sp, fontWeight = FontWeight.Bold)
-                            Spacer(Modifier.height(12.dp))
-                            Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                                AspectRatio.entries.take(2).forEach { ratio ->
-                                    AspectChip(ratio, state.selectedAspect == ratio, Modifier.weight(1f)) { viewModel.onAspectChanged(ratio) }
-                                }
-                            }
-                            Spacer(Modifier.height(8.dp))
-                            Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                                AspectRatio.entries.drop(2).forEach { ratio ->
-                                    AspectChip(ratio, state.selectedAspect == ratio, Modifier.weight(1f)) { viewModel.onAspectChanged(ratio) }
-                                }
-                            }
-                        }
-                    }
-                    Spacer(Modifier.height(12.dp))
-                }
-            }
+            // Aspect ratio block removed as we now have an interactive canvas
 
             // Dimensions inputs (shown in Resize mode)
             if (state.mode == ResizeCropMode.RESIZE) {
@@ -266,7 +288,22 @@ fun ResizeCropScreen(viewModel: ResizeCropViewModel, modifier: Modifier = Modifi
                     Card(modifier = Modifier.fillMaxWidth().padding(16.dp), colors = CardDefaults.cardColors(SurfaceCard), shape = RoundedCornerShape(16.dp)) {
                         Column(Modifier.padding(16.dp)) {
                             when (result) {
-                                is ResizeResult.Success -> Text("✓ Saved! ${result.newWidth}×${result.newHeight}px", color = SuccessGreen, fontWeight = FontWeight.Bold)
+                                is ResizeResult.Success -> {
+                                    Text("✓ Saved! ${result.newWidth}×${result.newHeight}px", color = SuccessGreen, fontWeight = FontWeight.Bold)
+                                    Spacer(Modifier.height(16.dp))
+                                    androidx.compose.material3.Button(
+                                        onClick = {
+                                            viewModel.onSaveToDevice(context) { success ->
+                                                val msg = if (success) "Saved to Gallery!" else "Failed to save"
+                                                android.widget.Toast.makeText(context, msg, android.widget.Toast.LENGTH_SHORT).show()
+                                            }
+                                        },
+                                        modifier = Modifier.fillMaxWidth(),
+                                        colors = androidx.compose.material3.ButtonDefaults.buttonColors(containerColor = GradientPurple)
+                                    ) {
+                                        Text("Download to Gallery", color = Color.White)
+                                    }
+                                }
                                 is ResizeResult.Error   -> Text("✗ ${result.message}", color = com.example.lightimg.theme.ErrorRed)
                             }
                         }

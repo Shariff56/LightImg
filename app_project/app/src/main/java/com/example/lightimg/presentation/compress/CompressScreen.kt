@@ -173,6 +173,12 @@ fun CompressScreen(
         CompressResultSheet(
             results   = state.results,
             onDismiss = { viewModel.onResultSheetDismissed() },
+            onSave    = {
+                viewModel.onSaveToDevice(context) { success ->
+                    val msg = if (success) "Saved to Gallery!" else "Failed to save"
+                    android.widget.Toast.makeText(context, msg, android.widget.Toast.LENGTH_SHORT).show()
+                }
+            }
         )
     }
 }
@@ -438,6 +444,7 @@ private fun CompressionSettingsCard(
 private fun CompressResultSheet(
     results: List<CompressResult>,
     onDismiss: () -> Unit,
+    onSave: () -> Unit,
 ) {
     val successCount = results.filterIsInstance<CompressResult.Success>().size
     val totalSaved = results.filterIsInstance<CompressResult.Success>()
@@ -461,6 +468,13 @@ private fun CompressResultSheet(
                 Text("$successCount image(s) compressed · Saved ${formatBytes(totalSaved)}", color = TextSecondary, fontSize = 14.sp)
                 Spacer(Modifier.height(20.dp))
                 Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+                    androidx.compose.material3.Button(
+                        onClick = onSave,
+                        modifier = Modifier.weight(1f),
+                        colors = androidx.compose.material3.ButtonDefaults.buttonColors(containerColor = GradientPurple)
+                    ) {
+                        Text("Download", color = Color.White)
+                    }
                     TextButton(onClick = onDismiss, modifier = Modifier.weight(1f)) {
                         Text("Compress Another", color = GradientPurple)
                     }
